@@ -58,14 +58,14 @@ namespace TimHanewich.Cds
             return ToReturn;
         }
         
-        public async Task CreateRecordAsync(string setter, JObject record)
+        public async Task CreateRecordAsync(string setter, string object_json)
         {
             //Construct the request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Post;
             req.RequestUri = new Uri(EnvironmentRequestUrl + setter);
             req.Headers.Add("Authorization", "Bearer " + AccessToken);
-            req.Content = new StringContent(record.ToString(), Encoding.UTF8, "application/json");
+            req.Content = new StringContent(object_json, Encoding.UTF8, "application/json");
 
             //Make the request
             HttpClient hc = new HttpClient();
