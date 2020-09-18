@@ -130,5 +130,27 @@ namespace TimHanewich.Cds
             //Return it
             return ToReturn.ToArray();
         }
+    
+        public async Task UpdateRecordAsync(string setter, string id, string object_json)
+        {
+            //Construct the endpoint
+            string ep = EnvironmentRequestUrl + setter + "(" + id + ")";
+
+            //Construct the request
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.Method = new HttpMethod("PATCH");
+            req.RequestUri = new Uri(ep);
+            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            req.Content = new StringContent(object_json, Encoding.UTF8, "application/json");
+            
+            //Make the request
+            HttpClient hc = new HttpClient();
+            HttpResponseMessage msg = await hc.SendAsync(req);
+            if (msg.StatusCode != HttpStatusCode.NoContent)
+            {
+                string cont = await msg.Content.ReadAsStringAsync();
+                throw new Exception("The update record request of type '" + setter + "' and ID '" + id + "' failed. Message content: " + cont);
+            }
+        }
     }
 }
