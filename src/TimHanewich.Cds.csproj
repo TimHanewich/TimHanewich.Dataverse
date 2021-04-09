@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.2.1</Version>
+    <Version>0.3.0</Version>
     <Authors>Tim Hanewich</Authors>
     <Description>Helper library for transacting with Microsoft's Common Data Service (XRM)</Description>
     <Copyright>Tim Hanewich</Copyright>
