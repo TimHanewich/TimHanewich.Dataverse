@@ -1,8 +1,8 @@
 TimHanewich.Cds
 ==============
-A lightweight library for interacting with Microsoft's Common Data Service (CDS), the native data storage service of Microsoft's Power Platform and Dynamics 365 platform.  
+A lightweight library for interacting with Microsoft's Dataverse (formerly Common Data Service or "XRM"), the native data service of Microsoft's Power Platform and Dynamics 365 platform.  
 --------  
-This library alleviates the need to create custom HTTP requests to interact with the CDS. After providing the service with a few parameters, you can easily interact with the CDS through the traditional CRUD operators.
+This library alleviates the need to create custom HTTP requests to interact with Dataverse. After providing the service with a few parameters, you can easily interact with the CDS through the traditional CRUD operators.
 
 ### Initializing the CDS Service
 Place the following import statements at the top of your code file.
