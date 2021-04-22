@@ -4,6 +4,13 @@ A lightweight library for interacting with Microsoft's Dataverse service (former
 --------  
 This library alleviates the need to create custom HTTP requests to interact with Dataverse. After providing the service with a few parameters, you can easily interact with the CDS through the traditional CRUD operators.
 
+## Install the package
+To install the package in your .NET (C# or VB.NET) project, add the following package from NuGet:
+[TimHanewich.Cds](https://www.nuget.org/packages/TimHanewich.Cds/)
+Run this command in the .NET CLI:
+
+    dotnet add package TimHanewich.Cds
+
 ### Initializing the CDS Service
 Place the following import statements at the top of your code file.
 
