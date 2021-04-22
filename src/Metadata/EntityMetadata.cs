@@ -77,6 +77,23 @@ namespace TimHanewich.Cds.Metadata
             ToReturn.IsDuplicateDetectionEnabled = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsDuplicateDetectionEnabled");
             ToReturn.CanCreateAttributes = CdsServiceMetadataExtension.GetNestedBoolean(jo, "CanCreateAttributes");
 
+            //Get all the attributes (if they exist)
+            JProperty prop_Attributes = jo.Property("Attributes");
+            if (prop_Attributes != null)
+            {
+                if (prop_Attributes.Value.Type != JTokenType.Null)
+                {
+                    JArray AllAttributes = JArray.Parse(prop_Attributes.Value.ToString());
+                    List<AttributeMetadata> MyAtts = new List<AttributeMetadata>();
+                    foreach (JObject obj_a in AllAttributes)
+                    {
+                        AttributeMetadata amd = AttributeMetadata.ParseFromApiJson(obj_a.ToString());
+                        MyAtts.Add(amd);
+                    }
+                    ToReturn.Attributes = MyAtts.ToArray();
+                }
+            }
+
             return ToReturn;
         }
 
