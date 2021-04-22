@@ -26,6 +26,7 @@ namespace TimHanewich.Cds.Metadata
         public bool IsCustomizable {get; set;}
         public bool IsDuplicateDetectionEnabled {get; set;}
         public bool CanCreateAttributes {get; set;}
+        public AttributeMetadata[] Attributes {get; set;}
 
         public EntityMetadata()
         {
