@@ -69,72 +69,17 @@ namespace TimHanewich.Cds.Metadata
             ToReturn.IsPrivate = Convert.ToBoolean(jo.Property("IsPrivate").Value.ToString());
             ToReturn.CreatedOn = DateTime.Parse(jo.Property("CreatedOn").Value.ToString());
             ToReturn.ModifiedOn = DateTime.Parse(jo.Property("ModifiedOn").Value.ToString());
-            ToReturn.Description = new EntityMetadata().GetLocalizedLabel(jo, "Description");
-            ToReturn.DisplayCollectioName = new EntityMetadata().GetLocalizedLabel(jo, "DisplayCollectionName");
-            ToReturn.DisplayName = new EntityMetadata().GetLocalizedLabel(jo, "DisplayName");
-            ToReturn.IsAuditEnabled = new EntityMetadata().GetNestedBoolean(jo, "IsAuditEnabled");
-            ToReturn.IsCustomizable = new EntityMetadata().GetNestedBoolean(jo, "IsCustomizable");
-            ToReturn.IsDuplicateDetectionEnabled = new EntityMetadata().GetNestedBoolean(jo, "IsDuplicateDetectionEnabled");
-            ToReturn.CanCreateAttributes = new EntityMetadata().GetNestedBoolean(jo, "CanCreateAttributes");
+            ToReturn.Description = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "Description");
+            ToReturn.DisplayCollectioName = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayCollectionName");
+            ToReturn.DisplayName = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayName");
+            ToReturn.IsAuditEnabled = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsAuditEnabled");
+            ToReturn.IsCustomizable = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomizable");
+            ToReturn.IsDuplicateDetectionEnabled = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsDuplicateDetectionEnabled");
+            ToReturn.CanCreateAttributes = CdsServiceMetadataExtension.GetNestedBoolean(jo, "CanCreateAttributes");
 
             return ToReturn;
         }
 
-        #region "Utility"
-
-        private string GetLocalizedLabel(JObject master, string property_name)
-        {
-            JProperty prop = master.Property(property_name);
-            if (prop == null)
-            {
-                return null;
-            }
-            if (prop.Value.Type == JTokenType.Null)
-            {
-                return null;
-            }
-
-            //Get the localized label
-            JObject thisprop = JObject.Parse(prop.Value.ToString());
-            JProperty prop_localizedlabel = thisprop.Property("LocalizedLabel");
-            if (prop_localizedlabel == null)
-            {
-                return null;
-            }
-            if (prop_localizedlabel.Value.Type == JTokenType.Null)
-            {
-                return null;
-            }
-
-            //Get the label
-            JObject obj_localizedlabel = JObject.Parse(prop_localizedlabel.Value.ToString());
-            JProperty prop_label = obj_localizedlabel.Property("Label");
-            if (prop_label == null)
-            {
-                return null;
-            }
-            if (prop_label.Value.Type == JTokenType.Null)
-            {
-                return null;
-            }
-            return prop_label.Value.ToString();
-        }
-
-        private bool GetNestedBoolean(JObject master, string property_name)
-        {
-            //for properties that look like this:
-            // "CanCreateAttributes": {
-            //         "Value": true,
-            //         "CanBeChanged": false,
-            //         "ManagedPropertyLogicalName": "cancreateattributes"
-            //     }
-
-            JProperty prop = master.Property(property_name);
-            JObject asobj = JObject.Parse(prop.Value.ToString());
-            bool ToReturn = Convert.ToBoolean(asobj.Property("Value").Value.ToString());
-            return ToReturn;
-        }
-
-        #endregion
+        
     }
 }

@@ -67,5 +67,62 @@ namespace TimHanewich.Cds.Metadata
             EntityMetadata ToReturn = EntityMetadata.ParseFromApiJson(content);
             return ToReturn;
         }
+
+        #region "Utility"
+
+        public static string GetLocalizedLabel(JObject master, string property_name)
+        {
+            JProperty prop = master.Property(property_name);
+            if (prop == null)
+            {
+                return null;
+            }
+            if (prop.Value.Type == JTokenType.Null)
+            {
+                return null;
+            }
+
+            //Get the localized label
+            JObject thisprop = JObject.Parse(prop.Value.ToString());
+            JProperty prop_localizedlabel = thisprop.Property("LocalizedLabel");
+            if (prop_localizedlabel == null)
+            {
+                return null;
+            }
+            if (prop_localizedlabel.Value.Type == JTokenType.Null)
+            {
+                return null;
+            }
+
+            //Get the label
+            JObject obj_localizedlabel = JObject.Parse(prop_localizedlabel.Value.ToString());
+            JProperty prop_label = obj_localizedlabel.Property("Label");
+            if (prop_label == null)
+            {
+                return null;
+            }
+            if (prop_label.Value.Type == JTokenType.Null)
+            {
+                return null;
+            }
+            return prop_label.Value.ToString();
+        }
+
+        public static bool GetNestedBoolean(JObject master, string property_name)
+        {
+            //for properties that look like this:
+            // "CanCreateAttributes": {
+            //         "Value": true,
+            //         "CanBeChanged": false,
+            //         "ManagedPropertyLogicalName": "cancreateattributes"
+            //     }
+
+            JProperty prop = master.Property(property_name);
+            JObject asobj = JObject.Parse(prop.Value.ToString());
+            bool ToReturn = Convert.ToBoolean(asobj.Property("Value").Value.ToString());
+            return ToReturn;
+        }
+
+        #endregion
     }
 }
