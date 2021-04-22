@@ -51,3 +51,31 @@ A complete example of initializing a CDS Service and creating a new account reco
 ### Reading, Updating, and Deleting
 The reading, updating, and deleting methods are very similar to the `CreateRecordAsync` method that is detailed above. The only difference is that these three methods also have a parameter called `id` which serves as the unique identifier of the record that you are trying to transact on.  
 This `id` parameter is the GUID value associated with the record that you can find in Dynamics 365 or the Power Platform CDS portal.
+
+## Working with Tables & Attributes
+This package also provides the ability to read table and attribute structures. To leverage this capability import the resources by placing this statement at the top of your file:
+
+    using TimHanewich.Cds.Metadata;
+
+### Get a list of all records in the databse
+Use the `GetEntityMetadataSummariesAsync` method to receive and array of record summaries:
+
+    EntityMetadataSummary[] summaries = await service.GetEntityMetadataSummariesAsync();
+
+Each `EntityMetadataSummary` object contains the name of the record and "URL Extension" of the record that can be used to query records of this entity type.
+
+### Get metadata for a particular table
+Use the `GetEntityMetadataAsync` method to access metadata for a particular table.
+
+    EntityMetadata AccountsTableData = service.GetEntityMetadataAsync("account").Result;
+
+The `EntityMetadata` object provides details about all attributes (columns) in the table:
+
+    foreach (AttributeMetadata attribute in AccountsTableData.Attributes)
+    {
+        Console.WriteLine(attribute.DisplayName);
+        Console.WriteLine(attribute.SchemaName);
+        Console.WriteLine(attribute.LogicalName);
+        Console.WriteLine(attribute.Description);
+        Console.WriteLine(attribute.AttributeType.ToString());
+    }
