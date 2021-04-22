@@ -41,7 +41,7 @@ namespace TimHanewich.Cds.Metadata
             ToReturn.DisplayName = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayName");
             ToReturn.IsAuditEnabled = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsAuditEnabled");
             ToReturn.IsCustomizable = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomizable");
-            ToReturn.IsCustomAttribute = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomAttribute");
+            ToReturn.IsCustomAttribute = Convert.ToBoolean(jo.Property("IsCustomAttribute").Value.ToString());
 
             //String-related fields
             JProperty prop_Format = jo.Property("Format");
