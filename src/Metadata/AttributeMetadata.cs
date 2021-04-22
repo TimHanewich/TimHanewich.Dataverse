@@ -21,7 +21,7 @@ namespace TimHanewich.Cds.Metadata
         public bool IsAuditEnabled {get; set;}
         public bool IsCustomizable {get; set;}
 
-        public AttributeMetadata ParseFromApiJson(string json)
+        public static AttributeMetadata ParseFromApiJson(string json)
         {
             JObject jo = JObject.Parse(json);
             AttributeMetadata ToReturn = new AttributeMetadata();
