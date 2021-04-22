@@ -17,6 +17,7 @@ namespace TimHanewich.Cds.Metadata
         public string DisplayName {get; set;}
         public bool IsAuditEnabled {get; set;}
         public bool IsCustomizable {get; set;}
+        public bool IsCustomAttribute {get; set;}
 
         //String-specific values
         //These will only be populated if the attribute derives from a string field in CDS
@@ -40,6 +41,7 @@ namespace TimHanewich.Cds.Metadata
             ToReturn.DisplayName = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayName");
             ToReturn.IsAuditEnabled = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsAuditEnabled");
             ToReturn.IsCustomizable = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomizable");
+            ToReturn.IsCustomAttribute = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomAttribute");
 
             //String-related fields
             JProperty prop_Format = jo.Property("Format");
