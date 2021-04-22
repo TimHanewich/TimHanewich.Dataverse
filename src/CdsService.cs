@@ -152,5 +152,15 @@ namespace TimHanewich.Cds
                 throw new Exception("The update record request of type '" + setter + "' and ID '" + id + "' failed. Message content: " + cont);
             }
         }
+    
+        public string ReadEnvironmentRequestUrl()
+        {
+            return EnvironmentRequestUrl;
+        }
+
+        public string ReadAccessToken()
+        {
+            return AccessToken;
+        }
     }
 }
