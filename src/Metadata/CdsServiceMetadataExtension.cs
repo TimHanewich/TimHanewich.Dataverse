@@ -44,5 +44,28 @@ namespace TimHanewich.Cds.Metadata
 
             return ToReturn.ToArray();
         }
+    
+        public static async Task<EntityMetadata> GetEntityMetadataAsync(this CdsService service, string entity_logical_name)
+        {
+            string url = service.ReadEnvironmentRequestUrl() + "EntityDefinitions(LogicalName='" + entity_logical_name + "')?$expand=Attributes";
+
+            //Prepare the request
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.Method = HttpMethod.Get;
+            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            req.RequestUri = new Uri(url);
+            
+            //Make the request
+            HttpClient hc = new HttpClient();
+            HttpResponseMessage resp = await hc.SendAsync(req);
+            string content = await resp.Content.ReadAsStringAsync();
+            if (resp.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("Request for metadata for entity '" + entity_logical_name + "' failed with code " + resp.StatusCode.ToString() + ". Msg: " + content);
+            }
+
+            EntityMetadata ToReturn = EntityMetadata.ParseFromApiJson(content);
+            return ToReturn;
+        }
     }
 }
