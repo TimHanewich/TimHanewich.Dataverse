@@ -7,7 +7,7 @@ namespace TimHanewich.Cds.Metadata
     public class AttributeMetadata
     {
         public Guid MetadataId {get; set;}
-        public string AttributeType {get; set;}
+        public AttributeType AttributeType {get; set;}
         public int ColumnNumber {get; set;}
         public Version IntroducedVersion {get; set;}
         public bool IsManaged {get; set;}
@@ -31,7 +31,7 @@ namespace TimHanewich.Cds.Metadata
             AttributeMetadata ToReturn = new AttributeMetadata();
 
             ToReturn.MetadataId = Guid.Parse(jo.Property("MetadataId").Value.ToString());
-            ToReturn.AttributeType = jo.Property("AttributeType").Value.ToString();
+            ToReturn.AttributeType = CdsServiceMetadataExtension.AttributeTypeApiStringToEnum(jo.Property("AttributeType").Value.ToString());
             ToReturn.ColumnNumber = Convert.ToInt32(jo.Property("ColumnNumber").Value.ToString());
             ToReturn.IntroducedVersion = new Version(jo.Property("IntroducedVersion").Value.ToString());
             ToReturn.IsManaged = Convert.ToBoolean(jo.Property("IsManaged").Value.ToString());

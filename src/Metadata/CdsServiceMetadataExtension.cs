@@ -136,7 +136,7 @@ namespace TimHanewich.Cds.Metadata
 
             foreach (AttributeType val in Enum.GetValues(typeof(AttributeType)))
             {
-                if (val.ToString().ToLower() == att.ToLower()
+                if (val.ToString().ToLower() == att.ToLower())
                 {
                     ToReturn = val;
                 }
