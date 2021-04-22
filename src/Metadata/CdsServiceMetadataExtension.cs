@@ -130,6 +130,21 @@ namespace TimHanewich.Cds.Metadata
             return ToReturn;
         }
 
+        public static AttributeType AttributeTypeApiStringToEnum(string att)
+        {
+            AttributeType ToReturn = AttributeType.Other;
+
+            foreach (AttributeType val in Enum.GetValues(typeof(AttributeType)))
+            {
+                if (val.ToString().ToLower() == att.ToLower()
+                {
+                    ToReturn = val;
+                }
+            }
+
+            return ToReturn;
+        }
+
         #endregion
     }
 }
