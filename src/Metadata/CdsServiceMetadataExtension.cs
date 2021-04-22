@@ -84,18 +84,25 @@ namespace TimHanewich.Cds.Metadata
 
             //Get the localized label
             JObject thisprop = JObject.Parse(prop.Value.ToString());
-            JProperty prop_localizedlabel = thisprop.Property("LocalizedLabel");
+            JProperty prop_localizedlabel = thisprop.Property("LocalizedLabels");
             if (prop_localizedlabel == null)
             {
-                return null;
+                return null; 
             }
             if (prop_localizedlabel.Value.Type == JTokenType.Null)
             {
                 return null;
             }
 
+            //Get the first in the array
+            JArray ja = JArray.Parse(prop_localizedlabel.Value.ToString());
+            if (ja.Count == 0)
+            {
+                return null;
+            }
+
             //Get the label
-            JObject obj_localizedlabel = JObject.Parse(prop_localizedlabel.Value.ToString());
+            JObject obj_localizedlabel = JObject.Parse(ja[0].ToString());
             JProperty prop_label = obj_localizedlabel.Property("Label");
             if (prop_label == null)
             {
