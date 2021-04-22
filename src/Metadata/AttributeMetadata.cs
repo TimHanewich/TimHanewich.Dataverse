@@ -29,7 +29,7 @@ namespace TimHanewich.Cds.Metadata
             ToReturn.MetadataId = Guid.Parse(jo.Property("MetadataId").Value.ToString());
             ToReturn.AttributeType = jo.Property("AttributeType").Value.ToString();
             ToReturn.ColumnNumber = Convert.ToInt32(jo.Property("ColumnNumber").Value.ToString());
-            ToReturn.IntroducedVersion = new Version(jo.Property("Version").Value.ToString());
+            ToReturn.IntroducedVersion = new Version(jo.Property("IntroducedVersion").Value.ToString());
             ToReturn.IsManaged = Convert.ToBoolean(jo.Property("IsManaged").Value.ToString());
             ToReturn.LogicalName = jo.Property("LogicalName").Value.ToString();
             ToReturn.SchemaName = jo.Property("SchemaName").Value.ToString();
