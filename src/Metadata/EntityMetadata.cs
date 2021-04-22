@@ -95,7 +95,7 @@ namespace TimHanewich.Cds.Metadata
             }
 
             //Get the localized label
-            JObject thisprop = JObject.Parse(prop.ToString());
+            JObject thisprop = JObject.Parse(prop.Value.ToString());
             JProperty prop_localizedlabel = thisprop.Property("LocalizedLabel");
             if (prop_localizedlabel == null)
             {
@@ -107,7 +107,7 @@ namespace TimHanewich.Cds.Metadata
             }
 
             //Get the label
-            JObject obj_localizedlabel = JObject.Parse(prop_localizedlabel.ToString());
+            JObject obj_localizedlabel = JObject.Parse(prop_localizedlabel.Value.ToString());
             JProperty prop_label = obj_localizedlabel.Property("Label");
             if (prop_label == null)
             {
@@ -130,7 +130,7 @@ namespace TimHanewich.Cds.Metadata
             //     }
 
             JProperty prop = master.Property(property_name);
-            JObject asobj = JObject.Parse(prop.ToString());
+            JObject asobj = JObject.Parse(prop.Value.ToString());
             bool ToReturn = Convert.ToBoolean(asobj.Property("Value").Value.ToString());
             return ToReturn;
         }
