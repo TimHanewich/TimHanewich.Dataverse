@@ -11,6 +11,18 @@ Run this command in the .NET CLI:
 
     dotnet add package TimHanewich.Cds
 
+### Authenticating with Dataverse
+This class library supports authentication to the Dataverse web API. Use the `CdsAuthenticator` class to authenticate.
+
+    CdsAuthenticator auth = new CdsAuthenticator();
+    auth.Username = "<your username>";
+    auth.Password = "<your password>";
+    auth.ClientId = Guid.Parse("51f81489-12ee-4a9e-aaae-a2591f45987d");
+    auth.Resource = "https://<your org>.crm.dynamics.com/";
+    await auth.GetAccessTokenAsync();
+
+After running the `GetAccessTokenAsync` method, your access token will be stored inside the CdsAuthenticator object as the `AccessToken` property. Provide this `AccessToken` to the `CdsService` constructor (see below) to start using the Dataverse web API.
+
 ### Initializing the CDS Service
 Place the following import statements at the top of your code file.
 
@@ -24,7 +36,7 @@ Create a new CDS Service
 
 In the above example, replace "YourOrgName" with the organization name for your environment. For example, if your environment URL is https://org109a2adc0.crm.dynamics.com/, your org name is "org109a2adc0".  
 
-Also replace "YourAccessToken" with the access token that you have received after authenticating a user via an OAuth flow. Instructions on how to do this can be found in https://github.com/TimHanewich/Microsoft-Graph-Example/blob/master/CommonDataServiceExample.cs
+Replace "YourAccessToken" with the access token that you have received after authenticating through either the OAuth authentication flow or the above authentication using the `CdsAuthenticator` class (recommended).
 
 ### Creating a record
 We will use the `CreateRecordAsync` method of the CdsService to create a new record. This method accepts two parameters:  
