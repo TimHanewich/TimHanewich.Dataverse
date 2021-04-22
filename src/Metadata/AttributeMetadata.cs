@@ -33,7 +33,7 @@ namespace TimHanewich.Cds.Metadata
             ToReturn.IsManaged = Convert.ToBoolean(jo.Property("IsManaged").Value.ToString());
             ToReturn.LogicalName = jo.Property("LogicalName").Value.ToString();
             ToReturn.SchemaName = jo.Property("SchemaName").Value.ToString();
-            ToReturn.Format = jo.Property("Format").ToString();
+            ToReturn.Format = jo.Property("Format").Value.ToString();
             ToReturn.MaxLength = Convert.ToInt32(jo.Property("MaxLength").Value.ToString());
             ToReturn.DatabaseLength = Convert.ToInt32(jo.Property("DatabaseLength").Value.ToString());
             ToReturn.Description = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "Description");
