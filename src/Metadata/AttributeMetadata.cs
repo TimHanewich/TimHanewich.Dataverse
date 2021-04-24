@@ -21,7 +21,7 @@ namespace TimHanewich.Cds.Metadata
 
         //String-specific values
         //These will only be populated if the attribute derives from a string field in CDS
-        public string Format {get; set;}
+        public FormatType? Format {get; set;}
         public int MaxLength {get; set;}
         public int DatabaseLength {get; set;}
 
@@ -47,7 +47,11 @@ namespace TimHanewich.Cds.Metadata
             JProperty prop_Format = jo.Property("Format");
             if (prop_Format != null)
             {
-                ToReturn.Format = jo.Property("Format").Value.ToString();
+                ToReturn.Format = CdsServiceMetadataExtension.FormatApiStringToEnum(jo.Property("Format").Value.ToString());
+            }
+            else
+            {
+                ToReturn.Format = null;
             }
             JProperty prop_MaxLength = jo.Property("MaxLength");
             if (prop_MaxLength != null)
