@@ -145,6 +145,21 @@ namespace TimHanewich.Cds.Metadata
             return ToReturn;
         }
 
+        public static FormatType FormatApiStringToEnum(string format)
+        {
+            FormatType ToReturn = FormatType.Other;
+
+            foreach (FormatType ft in Enum.GetValues(typeof(FormatType)))
+            {
+                if (format.ToLower() == ft.ToString().ToLower())
+                {
+                    ToReturn = ft;
+                }
+            }
+
+            return ToReturn;
+        }
+
         #endregion
     }
 }
