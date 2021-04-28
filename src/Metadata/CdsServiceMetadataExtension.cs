@@ -52,7 +52,20 @@ namespace TimHanewich.Cds.Metadata
         public static async Task<EntityMetadata> GetEntityMetadataAsync(this CdsService service, string entity_logical_name)
         {
             string url = service.ReadEnvironmentRequestUrl() + "EntityDefinitions(LogicalName='" + entity_logical_name + "')?$expand=Attributes";
+            EntityMetadata ToReturn = await service.GetEntityMetadataFromRequestUrlAsync(url);
+            return ToReturn;
+        }
 
+        public static async Task<EntityMetadata> GetEntityMetadataAsync(this CdsService service, Guid metadata_id)
+        {
+            string url = service.ReadEnvironmentRequestUrl() + "EntityDefinitions(" + metadata_id.ToString() + ")?$expand=Attributes";
+            EntityMetadata ToReturn = await service.GetEntityMetadataFromRequestUrlAsync(url);
+            return ToReturn;
+        }
+
+        //Used for entity metadata
+        private static async Task<EntityMetadata> GetEntityMetadataFromRequestUrlAsync(this CdsService service, string url)
+        {
             //Prepare the request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Get;
@@ -65,7 +78,7 @@ namespace TimHanewich.Cds.Metadata
             string content = await resp.Content.ReadAsStringAsync();
             if (resp.StatusCode != HttpStatusCode.OK)
             {
-                throw new Exception("Request for metadata for entity '" + entity_logical_name + "' failed with code " + resp.StatusCode.ToString() + ". Msg: " + content);
+                throw new Exception("Request for metadata for entity failed with code " + resp.StatusCode.ToString() + ". Msg: " + content);
             }
 
             EntityMetadata ToReturn = EntityMetadata.ParseFromApiJson(content);
