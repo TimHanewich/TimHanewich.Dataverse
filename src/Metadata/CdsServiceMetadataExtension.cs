@@ -17,7 +17,7 @@ namespace TimHanewich.Cds.Metadata
             //Prepare request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Get;
-            req.RequestUri = new Uri(url);
+            req.RequestUri = new Uri(url + "EntityDefinitions?$select=LogicalName,SchemaName,LogicalCollectionName,CollectionSchemaName,EntitySetName");
             req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
 
             //Make the request
@@ -37,8 +37,12 @@ namespace TimHanewich.Cds.Metadata
             foreach (JObject oo in ja_values)
             {
                 EntityMetadataSummary s = new EntityMetadataSummary();
-                s.Name = oo.Property("name").Value.ToString();
-                s.UrlExtension = oo.Property("url").Value.ToString();
+                s.MetadataId = Guid.Parse(oo.Property("MetadataId").Value.ToString());
+                s.LogicalName = oo.Property("LogicalName").Value.ToString();
+                s.SchemaName = oo.Property("SchemaName").Value.ToString();
+                s.LogicalCollectionName = oo.Property("LogicalCollectionName").Value.ToString();
+                s.CollectionSchemaName = oo.Property("CollectionSchemaName").Value.ToString();
+                s.EntitySetName = oo.Property("EntitySetName").Value.ToString();
                 ToReturn.Add(s);
             }
 
