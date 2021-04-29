@@ -17,7 +17,7 @@ namespace TimHanewich.Cds.Metadata
             //Prepare request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Get;
-            req.RequestUri = new Uri(url + "EntityDefinitions?$select=LogicalName,SchemaName,LogicalCollectionName,CollectionSchemaName,EntitySetName");
+            req.RequestUri = new Uri(url + "EntityDefinitions?$select=LogicalName,SchemaName,LogicalCollectionName,CollectionSchemaName,EntitySetName, DisplayName,IsCustomEntity");
             req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
 
             //Make the request
@@ -43,6 +43,13 @@ namespace TimHanewich.Cds.Metadata
                 s.LogicalCollectionName = oo.Property("LogicalCollectionName").Value.ToString();
                 s.CollectionSchemaName = oo.Property("CollectionSchemaName").Value.ToString();
                 s.EntitySetName = oo.Property("EntitySetName").Value.ToString();
+
+                //Display name (if available)
+                s.DisplayName = GetLocalizedLabel(oo, "DisplayName");
+
+                //Is custom
+                s.IsCustomEntity = Convert.ToBoolean(oo.Property("IsCustomEntity").Value.ToString());
+                
                 ToReturn.Add(s);
             }
 
