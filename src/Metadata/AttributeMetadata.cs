@@ -19,6 +19,7 @@ namespace TimHanewich.Cds.Metadata
         public bool IsCustomizable {get; set;}
         public bool IsCustomAttribute {get; set;}
         public StringFormat? StringFormat {get; set;}
+        public AttributeRequireLevel RequireLevel {get; set;}
 
         //String-specific values
         //These will only be populated if the attribute derives from a string field in CDS
@@ -43,6 +44,31 @@ namespace TimHanewich.Cds.Metadata
             ToReturn.IsAuditEnabled = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsAuditEnabled");
             ToReturn.IsCustomizable = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomizable");
             ToReturn.IsCustomAttribute = Convert.ToBoolean(jo.Property("IsCustomAttribute").Value.ToString());
+
+            //Require level
+            JProperty prop_RequiredLevel = jo.Property("RequiredLevel");
+            if (prop_RequiredLevel != null)
+            {
+                JObject obj_RequiredLevel = JObject.Parse(prop_RequiredLevel.Value.ToString());
+                string requiredlvl = obj_RequiredLevel.Property("Value").Value.ToString();
+                if (requiredlvl == "None")
+                {
+                    ToReturn.RequireLevel = AttributeRequireLevel.None;
+                }
+                else if (requiredlvl == "Recommended")
+                {
+                    ToReturn.RequireLevel = AttributeRequireLevel.Recommended;
+                }
+                else if (requiredlvl == "ApplicationRequired")
+                {
+                    ToReturn.RequireLevel = AttributeRequireLevel.ApplicationRequired;
+                }
+                else //This should never happen
+                {
+                    ToReturn.RequireLevel = AttributeRequireLevel.None;
+                }
+            }
+
 
             //String-related fields
             JProperty prop_Format = jo.Property("Format");
@@ -89,6 +115,9 @@ namespace TimHanewich.Cds.Metadata
             {
                 ToReturn.StringFormat = null;
             }
+
+            
+
             
             return ToReturn;
         }
