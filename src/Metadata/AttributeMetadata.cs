@@ -18,6 +18,7 @@ namespace TimHanewich.Cds.Metadata
         public bool IsAuditEnabled {get; set;}
         public bool IsCustomizable {get; set;}
         public bool IsCustomAttribute {get; set;}
+        public StringFormat? StringFormat {get; set;}
 
         //String-specific values
         //These will only be populated if the attribute derives from a string field in CDS
@@ -62,6 +63,31 @@ namespace TimHanewich.Cds.Metadata
             if (prop_DatabaseLength != null)
             {
                 ToReturn.DatabaseLength = Convert.ToInt32(jo.Property("DatabaseLength").Value.ToString());
+            }
+
+            //String format (under the "FormatName" property, like this):
+            //"FormatName":{"Value":"Phone"}
+            JProperty prop_FormatName = jo.Property("FormatName");
+            if (prop_FormatName != null)
+            {
+                JObject obj_FormatName = JObject.Parse(jo.Property("FormatName").Value.ToString());
+                JProperty prop_Value = obj_FormatName.Property("Value");
+                string propformat = prop_Value.Value.ToString();
+                
+                //Auto assign
+                StringFormat ToAssign = TimHanewich.Cds.Metadata.StringFormat.Other;
+                foreach (StringFormat sf in Enum.GetValues(typeof(StringFormat)))
+                {
+                    if (sf.ToString().ToLower() == propformat.ToLower())
+                    {
+                        ToAssign = sf;
+                    }
+                }
+                ToReturn.StringFormat = ToAssign;
+            }
+            else
+            {
+                ToReturn.StringFormat = null;
             }
             
             return ToReturn;
