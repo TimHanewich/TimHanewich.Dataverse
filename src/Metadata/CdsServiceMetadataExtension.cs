@@ -70,6 +70,32 @@ namespace TimHanewich.Cds.Metadata
             return ToReturn;
         }
 
+        public static async Task<Choice[]> GetAllChoiceMetadataAsync(this CdsService service)
+        {
+            string url = service.ReadEnvironmentRequestUrl() + "GlobalOptionSetDefinitions";
+            HttpClient hc = new HttpClient();
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.RequestUri = new Uri(url);
+            req.Method = HttpMethod.Get;
+            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            HttpResponseMessage resp = await hc.SendAsync(req);
+            string content = await resp.Content.ReadAsStringAsync();
+            if (resp.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("Failure while trying to access choice metadata. Returned '" + resp.StatusCode.ToString() + "'. Msg: " + content);
+            }
+            JObject jo = JObject.Parse(content);
+            JArray ja = JArray.Parse(jo.Property("value").Value.ToString());
+            
+            List<Choice> ToReturn = new List<Choice>();
+            foreach (JObject joc in ja)
+            {
+                Choice c = Choice.ParseJsonFromApi(joc.ToString());
+                ToReturn.Add(c);
+            }
+            return ToReturn.ToArray();
+        }
+
         //Used for entity metadata
         private static async Task<EntityMetadata> GetEntityMetadataFromRequestUrlAsync(this CdsService service, string url)
         {
