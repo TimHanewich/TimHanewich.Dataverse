@@ -115,8 +115,9 @@ namespace TimHanewich.Cds.AdvancedRead
                 ToReturn = "$filter=";
                 foreach (CdsReadFilter filter in Filters)
                 {
-                    ToReturn = ToReturn + filter.ToString();
+                    ToReturn = ToReturn + filter.ToString() + " ";
                 }
+                ToReturn = ToReturn.Substring(0, ToReturn.Length - 1);
             }
 
             return ToReturn;
