@@ -20,6 +20,7 @@ namespace TimHanewich.Cds.AdvancedRead
 
         public CdsReadFilter()
         {
+            LogicalOperatorPrefix = null;
             ColumnName = null;
             _Value = null;
         }
