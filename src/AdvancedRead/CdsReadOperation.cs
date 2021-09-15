@@ -6,7 +6,7 @@ namespace TimHanewich.Cds.AdvancedRead
     public class CdsReadOperation : CdsReadConfiguration
     {
         public Guid? RecordId {get; set;}
-        public CdsReadConfiguration Exand {get; set;}
+        public CdsReadConfiguration Expand {get; set;}
 
         //Filters
         private List<CdsReadFilter> _Filters;
@@ -83,11 +83,20 @@ namespace TimHanewich.Cds.AdvancedRead
                 ParamsToAdd.Add(SelectStmt);
             }
 
+            //Append an expand if one exists
+            string ExpandStmt = PrepareExpandStatement();
+            if (ExpandStmt != null)
+            {
+                ParamsToAdd.Add(ExpandStmt);
+            }
+
             //Add them
             ToReturn = ToReturn + UrlParamSeperator(ParamsToAdd.ToArray());
 
             return ToReturn;
         }
+
+        #region "UTILITY"
 
         private string PrepareSelectStatement()
         {
@@ -140,5 +149,30 @@ namespace TimHanewich.Cds.AdvancedRead
             return ToReturn;
         }
 
+        private string PrepareExpandStatement()
+        {
+            string ToReturn = null;
+
+            if (Expand != null)
+            {
+                ToReturn = ToReturn + "$expand=" + Expand.Table;
+
+                //Prepare columns to select (if any)
+                if (Expand.SelectColumns.Length > 0)
+                {
+                    ToReturn = ToReturn + "($select=";
+                    foreach (string s in Expand.SelectColumns)
+                    {
+                        ToReturn = ToReturn + s + ",";
+                    }
+                    ToReturn = ToReturn.Substring(0, ToReturn.Length - 1); //Remove the last comma
+                    ToReturn = ToReturn + ")";
+                }
+            }
+
+            return ToReturn;
+        }
+
+        #endregion
     }
 }
