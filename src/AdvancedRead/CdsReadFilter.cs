@@ -40,6 +40,11 @@ namespace TimHanewich.Cds.AdvancedRead
             _Value = value.ToString();
         }
     
+        public void SetValue(Guid value)
+        {
+            _Value = value.ToString();
+        }
+
         public override string ToString()
         {
             if (ColumnName == null)
