@@ -45,9 +45,9 @@ namespace TimHanewich.Cds.AdvancedRead
 
         public string ToUrlExtension()
         {
-            if (Table == null)
+            if (TableIdentifier == null)
             {
-                throw new Exception("Trying to construct query URL extension without setting the 'Table' property first. This is required.");
+                throw new Exception("Trying to construct query URL extension without setting the 'TableIdentifier' property first. This is required.");
             }
 
             //Is this for a single record or is this for an array of records? it cannot be both
@@ -58,7 +58,7 @@ namespace TimHanewich.Cds.AdvancedRead
             }
 
             //Start with the table name
-            string ToReturn = Table;
+            string ToReturn = TableIdentifier;
             
             //Add the next characters
             if (RecordId.HasValue) //If it is for 1 record only.
@@ -155,7 +155,7 @@ namespace TimHanewich.Cds.AdvancedRead
 
             if (Expand != null)
             {
-                ToReturn = ToReturn + "$expand=" + Expand.Table;
+                ToReturn = ToReturn + "$expand=" + Expand.TableIdentifier;
 
                 //Prepare columns to select (if any)
                 if (Expand.SelectColumns.Length > 0)

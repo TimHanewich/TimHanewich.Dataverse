@@ -5,7 +5,7 @@ namespace TimHanewich.Cds.AdvancedRead
 {
     public class CdsReadConfiguration
     {
-        public string Table {get; set;}
+        public string TableIdentifier {get; set;}
 
         //Column selection
         private List<string> _SelectColumns;
