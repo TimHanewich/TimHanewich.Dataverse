@@ -4,6 +4,7 @@ namespace TimHanewich.Cds.AdvancedRead
 {
     public class CdsReadFilter
     {
+        public LogicalOperator? LogicalOperatorPrefix {get; set;}
         public string ColumnName {get; set;}
         public ComparisonOperator Operator {get; set;}
         
@@ -49,7 +50,16 @@ namespace TimHanewich.Cds.AdvancedRead
                 throw new Exception("Unable to convert CDS Read Filter to string. Value was null.");
             }
 
-            return ColumnName + " " + OperatorToString(Operator) + " " + Value;
+            //Prepare
+            string ToReturn = ColumnName + " " + OperatorToString(Operator) + " " + Value;
+
+            //Add the logical operator
+            if (LogicalOperatorPrefix.HasValue)
+            {
+                ToReturn = LogicalOperatorToString(LogicalOperatorPrefix.Value) + " " + ToReturn;
+            }
+
+            return ToReturn;
         }
 
         #region "Utility Functions"
@@ -72,6 +82,21 @@ namespace TimHanewich.Cds.AdvancedRead
                     return "le";
                 default:
                     throw new Exception("String operator unknown for '" + op.ToString() + "'");
+            }
+        }
+
+        private string LogicalOperatorToString(LogicalOperator op)
+        {
+            switch (op)
+            {
+                case LogicalOperator.And:
+                    return "and";
+                case LogicalOperator.Or:
+                    return "or";
+                case LogicalOperator.Not:
+                    return "not";
+                default:
+                    throw new Exception("No string value known for logical operator '" + op.ToString() + "'");
             }
         }
 
