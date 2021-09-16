@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Text;
 using System.Collections.Generic;
+using TimHanewich.Cds.AdvancedRead;
 
 
 namespace TimHanewich.Cds
@@ -13,6 +14,7 @@ namespace TimHanewich.Cds
     public class CdsService
     {
         private string EnvironmentRequestUrl; //This should be something like https://org_name.crm.dynamics.com/api/data/v9.0/
+        
         private string AccessToken;
 
         #region "Constructors"
@@ -153,6 +155,60 @@ namespace TimHanewich.Cds
             }
         }
     
+        public async Task<JObject[]> ExecuteCdsReadOperationAsync(CdsReadOperation operation)
+        {
+            string ToRequestTo = EnvironmentRequestUrl + operation.ToUrlExtension();
+            HttpRequestMessage req = PrepareRequestMsg();
+            req.RequestUri = new Uri(ToRequestTo);
+            req.Method = HttpMethod.Get;
+
+            //Call
+            HttpClient hc = new HttpClient();
+            HttpResponseMessage resp = await hc.SendAsync(req);
+            string bodystr = await resp.Content.ReadAsStringAsync();
+            JObject body = JObject.Parse(bodystr);
+
+            //Get and retunr
+            List<JObject> ToReturn = new List<JObject>();
+
+            if (resp.StatusCode == HttpStatusCode.OK)
+            {
+                bool BodyIsOneRecord = false;
+
+                JProperty prop = body.Property("value");
+                if (prop != null)
+                {
+                    if (prop.Type == JTokenType.Array)
+                    {
+                        BodyIsOneRecord = false;
+                        foreach (JObject jo in prop)
+                        {
+                            ToReturn.Add(jo);
+                        }
+                    }
+                    else
+                    {
+                        BodyIsOneRecord = true;
+                    }
+                }
+                else
+                {
+                    BodyIsOneRecord = true;
+                }
+
+                if (BodyIsOneRecord)
+                {
+                    ToReturn.Add(body);
+                }
+            }
+            else
+            {
+                throw new Exception("Response from dataverse API: " + resp.StatusCode.ToString() + " - " + bodystr);
+            }
+
+            return ToReturn.ToArray();
+        }
+
         public string ReadEnvironmentRequestUrl()
         {
             return EnvironmentRequestUrl;
@@ -161,6 +217,15 @@ namespace TimHanewich.Cds
         public string ReadAccessToken()
         {
             return AccessToken;
+        }
+    
+    
+        private HttpRequestMessage PrepareRequestMsg()
+        {
+            //Construct the request
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            return req;
         }
     }
 }
