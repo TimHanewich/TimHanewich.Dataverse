@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TimHanewich.Cds.AdvancedRead
 {
-    public class CdsReadConfiguration
+    public class TableSelection
     {
         public string TableIdentifier {get; set;}
 
@@ -32,7 +32,7 @@ namespace TimHanewich.Cds.AdvancedRead
             _SelectColumns.Clear();
         }
 
-        public CdsReadConfiguration()
+        public TableSelection()
         {
             _SelectColumns = new List<string>();
         }

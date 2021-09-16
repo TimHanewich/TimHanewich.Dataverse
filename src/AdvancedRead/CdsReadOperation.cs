@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace TimHanewich.Cds.AdvancedRead
 {
-    public class CdsReadOperation : CdsReadConfiguration
+    public class CdsReadOperation : TableSelection
     {
         public Guid? RecordId {get; set;}
-        public CdsReadConfiguration Expand {get; set;}
+        public TableSelection Expand {get; set;}
 
         //Filters
         private List<CdsReadFilter> _Filters;

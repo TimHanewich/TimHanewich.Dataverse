@@ -173,30 +173,16 @@ namespace TimHanewich.Cds
 
             if (resp.StatusCode == HttpStatusCode.OK)
             {
-                bool BodyIsOneRecord = false;
-
                 JProperty prop = body.Property("value");
                 if (prop != null)
                 {
-                    if (prop.Type == JTokenType.Array)
+                    JArray ja = JArray.Parse(prop.Value.ToString());
+                    foreach (JObject jo in ja)
                     {
-                        BodyIsOneRecord = false;
-                        foreach (JObject jo in prop)
-                        {
-                            ToReturn.Add(jo);
-                        }
-                    }
-                    else
-                    {
-                        BodyIsOneRecord = true;
+                        ToReturn.Add(jo);
                     }
                 }
                 else
-                {
-                    BodyIsOneRecord = true;
-                }
-
-                if (BodyIsOneRecord)
                 {
                     ToReturn.Add(body);
                 }
