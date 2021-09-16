@@ -79,3 +79,86 @@ The `EntityMetadata` object provides details about all attributes (columns) in t
         Console.WriteLine(attribute.Description);
         Console.WriteLine(attribute.AttributeType.ToString());
     }
+
+## Advanced Read Operation
+This package also supports more complex read requests - for example, specifying certain columns to include, filtering based on column values, and requesting data from a related table.
+
+### Request a Single Record
+If you know the unique ID of the record you would like data for, you can request a single record as such:
+```
+CdsReadOperation read = new CdsReadOperation();
+read.TableIdentifier = "contacts";
+read.RecordId = Guid.Parse("9b8b1f4d-da14-ec11-b6e6-000d3a99fcc1");
+JObject[] QueryResults = await service.ExecuteCdsReadOperationAsync(read);
+Console.WriteLine("Your one record:");
+Console.WriteLine(QueryResults[0].ToString());
+```
+In the example above, the `service` object is an instance of the `CdsService` class.
+
+### Specify Certain Columns
+To save bandwidth and improve download times, you can also specify certain columns to include. Building from the code snippet above:
+```
+read.AddColumn("firstname");
+read.AddColumn("lastname");
+```
+*please note that if you do not specify a single column via the `AddColumn` method, all columns will be included by default.*
+
+### Add a Query Filter (or multiple!)
+You can also add a filter to your query. For example, if you are trying to select all invoices with a total value over $1,000:
+```
+CdsReadOperation read = new CdsReadOperation();
+read.TableIdentifier = "invoices";
+
+CdsReadFilter filter = new CdsReadFilter();
+filter.ColumnName = "total";
+filter.Operator = ComparisonOperator.GreaterThan;
+filter.SetValue(1000);
+read.AddFilter(filter);
+
+JObject[] results = await service.ExecuteCdsReadOperationAsync(read);
+```
+If you need to use multiple filter statements, you can also do this:
+```
+CdsReadOperation read = new CdsReadOperation();
+read.TableIdentifier = "invoices";
+
+CdsReadFilter filter = new CdsReadFilter();
+filter.ColumnName = "total";
+filter.Operator = ComparisonOperator.GreaterThan;
+filter.SetValue(1000);
+read.AddFilter(filter);
+
+CdsReadFilter filter2 = new CdsReadFilter();
+filter2.LogicalOperatorPrefix = LogicalOperator.And;
+filter2.ColumnName = "customer";
+filter2.SetValue(Guid.Parse("9b8b1f4d-da14-ec11-b6e6-000d3a99fcc1"));
+read.AddFilter(filter2);
+
+JObject[] results = await service.ExecuteCdsReadOperationAsync(read);
+```
+The key above is to define the `LogicalOperatorPrefix` property of the second filter. This is the logical prefix (for example "and", "or") that will be added between this filter and the preceeding filter.
+
+### Request Data from a Related Record
+Dataverse supports referrential table relationships via the **Lookup** data type. If you would like to include data from a related table, you can do so like this:
+```
+CdsReadOperation read = new CdsReadOperation();
+read.TableIdentifier = "patients";
+
+TableSelection related = new TableSelection();
+related.TableIdentifier = "father";
+read.Expand = related;
+```
+The key above is to set the `Expand` property of the `CdsReadOperation` to a `TableSelection` instance.  
+You can also limit to only certain columns you would like from the related table:
+```
+CdsReadOperation read = new CdsReadOperation();
+read.TableIdentifier = "patients";
+
+TableSelection related = new TableSelection();
+related.TableIdentifier = "father";
+related.AddColumn("firstname");
+related.AddColumn("lastname");
+related.AddColumn("dateofbirth");
+read.Expand = related;
+```
+
