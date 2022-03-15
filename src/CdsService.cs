@@ -24,10 +24,30 @@ namespace TimHanewich.Cds
 
         }
 
+        /// <summary>
+        /// Initializes a new CdsService
+        /// </summary>
+        /// <param name="environment_url">The URL to your Dataverse environment. (i.e. 'https://org7671dd37.crm.dynamics.com/')</param>
         public CdsService(string environment_url, string access_token)
         {
-            EnvironmentRequestUrl = environment_url + "/api/data/v9.0/";
-            EnvironmentRequestUrl = environment_url.Replace("//", "/"); //In case the environment url provided was provided with a trailing forward flash.
+            //Get the environment URL to use (trim the trailing slash)
+            string EnvUrlToUse = environment_url;
+            if (EnvUrlToUse.Substring(EnvUrlToUse.Length - 1, 1) == "/")
+            {
+                EnvUrlToUse = EnvUrlToUse.Substring(0, EnvUrlToUse.Length - 1);
+            }
+
+            //Append the dataverse API extensions
+            EnvironmentRequestUrl = EnvUrlToUse + "/api/data/v9.0/";
+
+            //If the provided environment url doesn't start with an https
+            if (EnvironmentRequestUrl.Substring(0, "https://".Length).ToLower() != "https://")
+            {
+                EnvironmentRequestUrl = "https://" + EnvironmentRequestUrl;
+            }
+
+            Console.WriteLine(EnvironmentRequestUrl);
+
             AccessToken = access_token;
         }
 
