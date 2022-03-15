@@ -24,9 +24,10 @@ namespace TimHanewich.Cds
 
         }
 
-        public CdsService(string org_name, string access_token)
+        public CdsService(string environment_url, string access_token)
         {
-            EnvironmentRequestUrl = "https://" + org_name + ".crm.dynamics.com/api/data/v9.0/";
+            EnvironmentRequestUrl = environment_url + "/api/data/v9.0/";
+            EnvironmentRequestUrl = environment_url.Replace("//", "/"); //In case the environment url provided was provided with a trailing forward flash.
             AccessToken = access_token;
         }
 
