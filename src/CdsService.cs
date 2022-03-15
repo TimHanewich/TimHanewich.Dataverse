@@ -46,8 +46,6 @@ namespace TimHanewich.Cds
                 EnvironmentRequestUrl = "https://" + EnvironmentRequestUrl;
             }
 
-            Console.WriteLine(EnvironmentRequestUrl);
-
             AccessToken = access_token;
         }
 
