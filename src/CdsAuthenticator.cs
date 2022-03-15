@@ -18,9 +18,30 @@ namespace TimHanewich.Cds
         public string Password {get; set;}
 
         //Access token
-        public string AccessToken {get; set;}
-        public DateTime AccessTokenReceivedUtc {get; set;}
-        public DateTime AccessTokenExpiresUtc {get; set;}
+        private string _AccessToken;
+        public string AccessToken
+        {
+            get
+            {
+                return _AccessToken;
+            }
+        }
+        private DateTime _AccessTokenReceivedUtc;
+        public DateTime AccessTokenReceivedUtc
+        {
+            get
+            {
+                return _AccessTokenReceivedUtc;
+            }
+        }
+        private DateTime _AccessTokenExpiresUtc;
+        public DateTime AccessTokenExpiresUtc
+        {
+            get
+            {
+                return _AccessTokenExpiresUtc;
+            }
+        }
 
         public async Task GetAccessTokenAsync()
         {
@@ -70,7 +91,7 @@ namespace TimHanewich.Cds
 
             //Extract the content we want
             JObject jo = JObject.Parse(content);
-            AccessTokenReceivedUtc = DateTime.UtcNow;
+            _AccessTokenReceivedUtc = DateTime.UtcNow;
 
             //Expires in
             JProperty prop_expires_in = jo.Property("expires_in");
@@ -79,7 +100,7 @@ namespace TimHanewich.Cds
                 if (prop_expires_in.Value.Type != JTokenType.Null)
                 {
                     int ExpiresInSeconds = Convert.ToInt32(prop_expires_in.Value.ToString());
-                    AccessTokenExpiresUtc = DateTime.UtcNow.AddSeconds(ExpiresInSeconds);
+                    _AccessTokenExpiresUtc = DateTime.UtcNow.AddSeconds(ExpiresInSeconds);
                 }
             }
 
@@ -93,7 +114,7 @@ namespace TimHanewich.Cds
                     int NumberOfSeconds = Convert.ToInt32(prop_expires_on.Value.ToString());
                     DateTime Foundation = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
                     DateTime ExpiresAtFixed = Foundation.AddSeconds(NumberOfSeconds);
-                    AccessTokenExpiresUtc = ExpiresAtFixed;
+                    _AccessTokenExpiresUtc = ExpiresAtFixed;
                 }
             }
 
@@ -103,7 +124,7 @@ namespace TimHanewich.Cds
             {
                 if (prop_access_token.Value.Type != JTokenType.Null)
                 {
-                    AccessToken = prop_access_token.Value.ToString();
+                    _AccessToken = prop_access_token.Value.ToString();
                 }
             }
         }
