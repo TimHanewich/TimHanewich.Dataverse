@@ -7,6 +7,7 @@ namespace TimHanewich.Cds.AdvancedRead
     {
         public Guid? RecordId {get; set;}
         public TableSelection Expand {get; set;}
+        public int? Top {get; set;}
 
         //Filters
         private List<CdsReadFilter> _Filters;
@@ -126,6 +127,12 @@ namespace TimHanewich.Cds.AdvancedRead
             if (ExpandStmt != null)
             {
                 ParamsToAdd.Add(ExpandStmt);
+            }
+
+            //Top?
+            if (Top.HasValue)
+            {
+                ParamsToAdd.Add("$top=" + Top.Value.ToString());
             }
 
             //Add them
