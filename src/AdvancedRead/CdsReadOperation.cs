@@ -106,6 +106,14 @@ namespace TimHanewich.Cds.AdvancedRead
                 ParamsToAdd.Add(FilterStmt);
             }
 
+            //Ordring statement
+            string OrderStmt = PrepareOrderStatement();
+            if (OrderStmt != null)
+            {
+                ParamsToAdd.Add(OrderStmt);
+            }
+
+
             //Append a select statement if one exists
             string SelectStmt = PrepareSelectStatement();
             if (SelectStmt != null)
@@ -198,6 +206,34 @@ namespace TimHanewich.Cds.AdvancedRead
                     ToReturn = ToReturn.Substring(0, ToReturn.Length - 1); //Remove the last comma
                     ToReturn = ToReturn + ")";
                 }
+            }
+
+            return ToReturn;
+        }
+
+        private string PrepareOrderStatement()
+        {
+            string ToReturn = null;
+
+            if (Ordering.Length > 0)
+            {
+                ToReturn = "$orderby=";
+                foreach (CdsReadOrder order in Ordering)
+                {
+                    ToReturn = ToReturn + order.ColumnName + " ";
+                    if (order.Direction == OrderDirection.Ascending)
+                    {
+                        ToReturn = ToReturn + "asc";
+                    }
+                    else if (order.Direction == OrderDirection.Descending)
+                    {
+                        ToReturn = ToReturn + "desc";
+                    }
+
+                    //Place a comma at the end
+                    ToReturn = ToReturn + ",";
+                }
+                ToReturn = ToReturn.Substring(0, ToReturn.Length - 1); //Remove the last trailing comma
             }
 
             return ToReturn;
