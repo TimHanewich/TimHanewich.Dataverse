@@ -18,10 +18,21 @@ namespace TimHanewich.Cds.AdvancedRead
             }
         }
 
+        //Sorting
+        private List<CdsReadOrder> _Ordering;
+        public CdsReadOrder[] Ordering
+        {
+            get
+            {
+                return _Ordering.ToArray();
+            }
+        }
+
         public CdsReadOperation()
         {
             RecordId = null;
             _Filters = new List<CdsReadFilter>();
+            _Ordering = new List<CdsReadOrder>();
         }
 
         #region "Filters operations"
@@ -39,6 +50,25 @@ namespace TimHanewich.Cds.AdvancedRead
         public void ClearFilters()
         {
             _Filters.Clear();
+        }
+
+        #endregion
+
+        #region "Ordering"
+
+        public void AddOrdering(CdsReadOrder order)
+        {
+            _Ordering.Add(order);
+        }
+
+        public void RemoveOrdering(CdsReadOrder order)
+        {
+            _Ordering.Remove(order);
+        }
+
+        public void ClearOrdering()
+        {
+            _Ordering.Clear();
         }
 
         #endregion
