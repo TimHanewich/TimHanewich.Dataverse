@@ -174,7 +174,7 @@ namespace TimHanewich.Cds
             }
         }
     
-        public async Task<JObject[]> ExecuteCdsReadOperationAsync(CdsReadOperation operation)
+        public async Task<JObject[]> ReadAsync(CdsReadOperation operation)
         {
             string ToRequestTo = EnvironmentRequestUrl + operation.ToUrlExtension();
             HttpRequestMessage req = PrepareRequestMsg();
