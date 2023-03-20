@@ -96,6 +96,48 @@ namespace TimHanewich.Cds.Metadata
             return ToReturn.ToArray();
         }
 
+        //If you find an attribute of a table that uses a picklist, this will let you find the logical name of the global option set that that attribute points to
+        public static async Task<string> FindPicklistGlobalOptionSetAsync(this CdsService service, string entity_logical_name, Guid attribute_id)
+        {
+            string url = service.ReadEnvironmentRequestUrl() + "EntityDefinitions(LogicalName='" + entity_logical_name + "')/Attributes(" + attribute_id.ToString() + ")/Microsoft.Dynamics.CRM.PicklistAttributeMetadata?$expand=OptionSet";
+            HttpClient hc = new HttpClient();
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.RequestUri = new Uri(url);
+            req.Method = HttpMethod.Get;
+            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            HttpResponseMessage resp = await hc.SendAsync(req);
+            string content = await resp.Content.ReadAsStringAsync();
+            if (resp.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("Failure while trying to find global option set used in entity '" + entity_logical_name + "' in attribute '" + attribute_id.ToString() + "'. Returned '" + resp.StatusCode.ToString() + "'. Msg: " + content);
+            }
+            JObject jo = JObject.Parse(content);
+
+            //Get the OptionSet property
+            JProperty prop_OptionSet = jo.Property("OptionSet");
+            if (prop_OptionSet != null)
+            {
+                JObject OptionSet = JObject.Parse(prop_OptionSet.Value.ToString());
+                JProperty prop_Name = OptionSet.Property("Name");
+                if (prop_Name != null)
+                {
+                    return prop_Name.Value.ToString();
+                }
+                else
+                {
+                    throw new Exception("Failure while trying to find global option set used in entity '" + entity_logical_name + "' in attribute '" + attribute_id.ToString() + "': OptionSet property did not have a 'Name' property.");
+                }
+            }
+            else
+            {
+                throw new Exception("Failure while trying to find global option set used in entity '" + entity_logical_name + "' in attribute '" + attribute_id.ToString() + "': OptionSet property was not returned in the payload.");
+            }
+        }
+
+
+
+
+
         //Used for entity metadata
         private static async Task<EntityMetadata> GetEntityMetadataFromRequestUrlAsync(this CdsService service, string url)
         {
