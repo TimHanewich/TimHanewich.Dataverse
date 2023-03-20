@@ -27,6 +27,11 @@ namespace TimHanewich.Cds.Metadata
         public int MaxLength {get; set;}
         public int DatabaseLength {get; set;}
 
+        //Lookup-specific values
+        // These will only be populated if this attribute is a lookup value
+        // If this attribute is NOT a lookup value, it will be null
+        public string[] Targets {get; set;}
+
         public static AttributeMetadata ParseFromApiJson(string json)
         {
             JObject jo = JObject.Parse(json);
@@ -117,6 +122,19 @@ namespace TimHanewich.Cds.Metadata
             }
 
             
+            // Targets property (for lookups, which table it points to)
+            JProperty prop_Targets = jo.Property("Targets");
+            if (prop_Targets != null)
+            {
+                if (prop_Targets.Value.Type != JTokenType.Null)
+                {
+                    if (prop_Targets.Value.Type != JTokenType.None)
+                    {
+                        string[] targets = JsonConvert.DeserializeObject<string[]>(prop_Targets.Value.ToString()); // It will be an array of strings, with each string representing the logical name of the entity.
+                        ToReturn.Targets = targets;
+                    }
+                }
+            }
 
             
             return ToReturn;
