@@ -17,7 +17,7 @@ namespace TimHanewich.Cds.Metadata
             //Prepare request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Get;
-            req.RequestUri = new Uri(url + "EntityDefinitions?$select=LogicalName,SchemaName,LogicalCollectionName,CollectionSchemaName,EntitySetName, DisplayName,IsCustomEntity");
+            req.RequestUri = new Uri(url + "EntityDefinitions?$select=LogicalName,SchemaName,LogicalCollectionName,CollectionSchemaName,EntitySetName,DisplayName,IsCustomEntity, DisplayCollectionName");
             req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
 
             //Make the request
