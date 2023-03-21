@@ -6,6 +6,7 @@ namespace TimHanewich.Cds.Metadata
     {
         public Guid MetadataId {get; set;}
         public string DisplayName {get; set;}
+        public string DisplayCollectionName {get; set;} //plural display name
         public string LogicalName {get; set;} //Used to request additional metadata
         public string SchemaName {get; set;}
         public string LogicalCollectionName {get; set;}

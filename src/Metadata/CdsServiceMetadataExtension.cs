@@ -47,6 +47,9 @@ namespace TimHanewich.Cds.Metadata
                 //Display name (if available)
                 s.DisplayName = GetLocalizedLabel(oo, "DisplayName");
 
+                //Collection Display Name
+                s.DisplayCollectionName = GetLocalizedLabel(oo, "DisplayCollectionName");
+
                 //Is custom
                 s.IsCustomEntity = Convert.ToBoolean(oo.Property("IsCustomEntity").Value.ToString());
                 
