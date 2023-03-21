@@ -136,6 +136,97 @@ namespace TimHanewich.Cds.Metadata
 
 
 
+        # region "Relationships"
+
+        //Get one to many relationships where this entity is pointing to any other entity ("entities this entity points to")
+        public static async Task<OneToManyRelationship[]> GetOneToManyRelationshipsByReferencingEntityAsync(this CdsService service, string entity_logical_name)
+        {
+            string url = service.ReadEnvironmentRequestUrl() + "RelationshipDefinitions/Microsoft.Dynamics.CRM.OneToManyRelationshipMetadata?$filter=ReferencingEntity eq '" + entity_logical_name + "'";
+            HttpClient hc = new HttpClient();
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.RequestUri = new Uri(url);
+            req.Method = HttpMethod.Get;
+            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            HttpResponseMessage resp = await hc.SendAsync(req);
+            string content = await resp.Content.ReadAsStringAsync();
+            if (resp.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("Failure while trying to find one to many relationships by referencing entity '" + entity_logical_name + "': " + content);
+            }
+            JObject jo = JObject.Parse(content);
+
+            return ParseOneToManyRelationships(jo);
+        }
+
+        //Get one to many relationships where this entity is being pointed at by any other entity ("entities that point at this entity")
+        public static async Task<OneToManyRelationship[]> GetOneToManyRelationshipsByReferencedEntityAsync(this CdsService service, string entity_logical_name)
+        {
+            string url = service.ReadEnvironmentRequestUrl() + "RelationshipDefinitions/Microsoft.Dynamics.CRM.OneToManyRelationshipMetadata?$filter=ReferencedEntity eq '" + entity_logical_name + "'";
+            HttpClient hc = new HttpClient();
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.RequestUri = new Uri(url);
+            req.Method = HttpMethod.Get;
+            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            HttpResponseMessage resp = await hc.SendAsync(req);
+            string content = await resp.Content.ReadAsStringAsync();
+            if (resp.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("Failure while trying to find one to many relationships by referencing entity '" + entity_logical_name + "': " + content);
+            }
+            JObject jo = JObject.Parse(content);
+
+            return ParseOneToManyRelationships(jo);
+        }
+
+        private static OneToManyRelationship[] ParseOneToManyRelationships(JObject api_response)
+        {
+            JProperty prop_value = api_response.Property("value");
+            if (prop_value == null)
+            {
+                throw new Exception("Unable to parse OneToMany relationships from API response");
+            }
+            JArray value = (JArray)prop_value.Value;
+            List<OneToManyRelationship> ToReturn = new List<OneToManyRelationship>();
+            foreach (JObject jo in value)
+            {
+                OneToManyRelationship rel = new OneToManyRelationship();
+
+                //ReferencedAttribute
+                JProperty prop_ReferencedAttribute = jo.Property("ReferencedAttribute");
+                if (prop_ReferencedAttribute != null)
+                {
+                    rel.ReferencedAttribute = prop_ReferencedAttribute.Value.ToString();
+                }
+
+                //ReferencedEntity
+                JProperty prop_ReferencedEntity = jo.Property("ReferencedEntity");
+                if (prop_ReferencedEntity != null)
+                {
+                    rel.ReferencedEntity = prop_ReferencedEntity.Value.ToString();
+                }
+
+                //ReferencingAttribute
+                JProperty prop_ReferencingAttribute = jo.Property("ReferencingAttribute");
+                if (prop_ReferencedEntity != null)
+                {
+                    rel.ReferencingAttribute = prop_ReferencingAttribute.Value.ToString();
+                }
+
+                //ReferencingEntity
+                JProperty prop_ReferencingEntity = jo.Property("ReferencingEntity");
+                if (prop_ReferencedEntity != null)
+                {
+                    rel.ReferencingEntity = prop_ReferencingEntity.Value.ToString();
+                }
+
+                ToReturn.Add(rel);
+            }
+            return ToReturn.ToArray();
+        }
+
+        # endregion
+
+
 
 
         //Used for entity metadata
