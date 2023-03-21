@@ -136,7 +136,7 @@ namespace TimHanewich.Cds.Metadata
 
 
 
-        # region "One to many relationships"
+        # region "one to many relationships"
 
         //Get one to many relationships where this entity is pointing to any other entity ("entities this entity points to")
         public static async Task<OneToManyRelationship[]> GetOneToManyRelationshipsByReferencingEntityAsync(this CdsService service, string entity_logical_name)
@@ -219,6 +219,13 @@ namespace TimHanewich.Cds.Metadata
                     rel.ReferencingEntity = prop_ReferencingEntity.Value.ToString();
                 }
 
+                //IsCustomAttribute
+                JProperty prop_IsCustomRelationship = jo.Property("IsCustomRelationship");
+                if (prop_IsCustomRelationship != null)
+                {
+                    rel.IsCustomRelationship = Convert.ToBoolean(prop_IsCustomRelationship.Value.ToString());
+                }
+
                 ToReturn.Add(rel);
             }
             return ToReturn.ToArray();
@@ -290,6 +297,13 @@ namespace TimHanewich.Cds.Metadata
                 if (prop_Entity2IntersectAttribute != null)
                 {
                     rel.Entity2IntersectAttribute = prop_Entity2IntersectAttribute.Value.ToString();
+                }
+
+                //IsCustomAttribute
+                JProperty prop_IsCustomRelationship = jo.Property("IsCustomRelationship");
+                if (prop_IsCustomRelationship != null)
+                {
+                    rel.IsCustomRelationship = Convert.ToBoolean(prop_IsCustomRelationship.Value.ToString());
                 }
 
                 ToReturn.Add(rel);

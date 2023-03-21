@@ -12,6 +12,8 @@ namespace TimHanewich.Cds.Metadata
         //The entity that is "pointing" at another table (the "many" in the relationship)
         public string ReferencingAttribute {get; set;} //The property it is using to "point" the foreign key, containing the primary key of the table it is pointing to
         public string ReferencingEntity {get; set;} //Entity logical name
+
+        public bool IsCustomRelationship {get; set;}
     
     }
 }

@@ -12,5 +12,6 @@ namespace TimHanewich.Cds.Metadata
         public string Entity1IntersectAttribute {get; set;} //The attribute of entity 1 that the intersect is using (it's primary key most likely)
         public string Entity2IntersectAttribute {get; set;} //The attribute of entity 2 that the intersect is using (it's primary key most likely)
     
+        public bool IsCustomRelationship {get; set;}
     }
 }
