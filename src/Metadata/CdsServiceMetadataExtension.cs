@@ -136,7 +136,7 @@ namespace TimHanewich.Cds.Metadata
 
 
 
-        # region "Relationships"
+        # region "One to many relationships"
 
         //Get one to many relationships where this entity is pointing to any other entity ("entities this entity points to")
         public static async Task<OneToManyRelationship[]> GetOneToManyRelationshipsByReferencingEntityAsync(this CdsService service, string entity_logical_name)
@@ -226,7 +226,78 @@ namespace TimHanewich.Cds.Metadata
 
         # endregion
 
+        # region "many to many relationships"
 
+        public static async Task<ManyToManyRelationship[]> GetManyToManyRelationshipsAsync(this CdsService service, string entity_logical_name)
+        {
+            string url = service.ReadEnvironmentRequestUrl() + "RelationshipDefinitions/Microsoft.Dynamics.CRM.ManyToManyRelationshipMetadata?$filter=Entity1LogicalName eq '" + entity_logical_name + "' or Entity2LogicalName eq '" + entity_logical_name + "'";
+            HttpClient hc = new HttpClient();
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.RequestUri = new Uri(url);
+            req.Method = HttpMethod.Get;
+            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            HttpResponseMessage resp = await hc.SendAsync(req);
+            string content = await resp.Content.ReadAsStringAsync();
+            if (resp.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("Failure while trying to find one to many relationships by referencing entity '" + entity_logical_name + "': " + content);
+            }
+            JObject jo = JObject.Parse(content);
+
+            //Parse
+            JProperty prop_value = jo.Property("value");
+            if (prop_value == null)
+            {
+                throw new Exception("Unable to parse ManyToMany relationships from API response");
+            }
+            JArray value = (JArray)prop_value.Value;
+            List<ManyToManyRelationship> ToReturn = new List<ManyToManyRelationship>();
+            foreach (JObject j in value)
+            {
+                ManyToManyRelationship rel = new ManyToManyRelationship();
+
+                //Entity1LogicalName
+                JProperty prop_Entity1LogicalName = j.Property("Entity1LogicalName");
+                if (prop_Entity1LogicalName != null)
+                {
+                    rel.Entity1LogicalName = prop_Entity1LogicalName.Value.ToString();
+                }
+
+
+                //Entity2LogicalName
+                JProperty prop_Entity2LogicalName = j.Property("Entity2LogicalName");
+                if (prop_Entity2LogicalName != null)
+                {
+                    rel.Entity2LogicalName = prop_Entity2LogicalName.Value.ToString();
+                }
+
+                //IntersectEntityName
+                JProperty prop_IntersectEntityName = j.Property("IntersectEntityName");
+                if (prop_IntersectEntityName != null)
+                {
+                    rel.IntersectEntityName = prop_IntersectEntityName.Value.ToString();
+                }
+
+                //Entity1IntersectAttribute
+                JProperty prop_Entity1IntersectAttribute = j.Property("Entity1IntersectAttribute");
+                if (prop_Entity1IntersectAttribute != null)
+                {
+                    rel.Entity1IntersectAttribute = prop_Entity1IntersectAttribute.Value.ToString();
+                }
+
+                //Entity2IntersectAttribute
+                JProperty prop_Entity2IntersectAttribute = j.Property("Entity2IntersectAttribute");
+                if (prop_Entity2IntersectAttribute != null)
+                {
+                    rel.Entity2IntersectAttribute = prop_Entity2IntersectAttribute.Value.ToString();
+                }
+
+                ToReturn.Add(rel);
+            }
+            return ToReturn.ToArray();
+        }
+
+        # endregion
 
 
         //Used for entity metadata
