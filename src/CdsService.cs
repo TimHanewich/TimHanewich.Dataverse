@@ -214,6 +214,37 @@ namespace TimHanewich.Cds
             return ToReturn.ToArray();
         }
 
+        //Provide an odata portion of the URL, i.e. EntityDefinitions?$select=LogicalName,LogicalCollectionName,DisplayName,IsCustomEntity&$expand=Attributes($select=AttributeType,LogicalName,DisplayName,IsCustomAttribute)&$filter=IsCustomEntity eq true
+        public async Task<JArray> ReadAsync(string url_odata_portion)
+        {
+            string ToRequestTo = EnvironmentRequestUrl + url_odata_portion;
+            HttpRequestMessage req = PrepareRequestMsg();
+            req.RequestUri = new Uri(ToRequestTo);
+            req.Method = HttpMethod.Get;
+
+            //Call
+            HttpClient hc = new HttpClient();
+            HttpResponseMessage resp = await hc.SendAsync(req);
+            string bodystr = await resp.Content.ReadAsStringAsync();
+            if (resp.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("The Dataverse API returned '" + resp.StatusCode.ToString() + "' during an attempted read operation. Message: " + bodystr);
+            }
+
+            
+            JObject body = JObject.Parse(bodystr);
+            JProperty prop_value = body.Property("value");
+            if (prop_value != null)
+            {
+                JArray ToReturn = (JArray)prop_value.Value;
+                return ToReturn;
+            }
+            else
+            {
+                throw new Exception("Unable to find value property (payload) in returned response from the Dataverse API");
+            }
+        }
+
         public string ReadEnvironmentRequestUrl()
         {
             return EnvironmentRequestUrl;
