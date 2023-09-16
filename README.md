@@ -26,7 +26,7 @@ After running the `GetAccessTokenAsync` method, your access token will be stored
 ### Initializing the CDS Service
 Place the following import statements at the top of your code file.
 
-    using TimHanewich.Cds;  
+    using TimHanewich.Dataverse;  
     using Newtonsoft.Json;  
     using Newtonsoft.Json.Linq;
 
@@ -55,7 +55,7 @@ This `id` parameter is the GUID value associated with the record that you can fi
 ## Working with Tables & Attributes
 This package also provides the ability to read table and attribute structures. To leverage this capability import the resources by placing this statement at the top of your file:
 
-    using TimHanewich.Cds.Metadata;
+    using TimHanewich.Dataverse.Metadata;
 
 ### Get a list of all records in the databse
 Use the `GetEntityMetadataSummariesAsync` method to receive and array of record summaries:

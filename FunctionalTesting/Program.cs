@@ -1,5 +1,5 @@
 ﻿using System;
-using TimHanewich.Cds;
+using TimHanewich.Dataverse;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
