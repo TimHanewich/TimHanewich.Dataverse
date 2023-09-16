@@ -8,7 +8,7 @@
     <Copyright>Tim Hanewich</Copyright>
     <PackageIcon>dataverse.png</PackageIcon>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <RepositoryUrl>https://github.com/TimHanewich/TimHanewich.Cds</RepositoryUrl>
+    <RepositoryUrl>https://github.com/TimHanewich/TimHanewich.Dataverse</RepositoryUrl>
     <PackageTags>cds,common data service,xrm,dataverse,teams</PackageTags>
     <FileVersion>0.0.0.0</FileVersion>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>

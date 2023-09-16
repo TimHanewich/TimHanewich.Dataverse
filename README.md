@@ -1,4 +1,4 @@
-TimHanewich.Cds
+TimHanewich.Dataverse
 ==============
 A lightweight library for interacting with Microsoft's Dataverse service (formerly Common Data Service or "XRM"), the native data service of Microsoft's Power Platform and Dynamics 365 platform.  
 --------  
@@ -6,10 +6,10 @@ This library alleviates the need to create custom HTTP requests to interact with
 
 ## Install the package
 To install the package in your .NET (C# or VB.NET) project, add the following package from NuGet:
-[TimHanewich.Cds](https://www.nuget.org/packages/TimHanewich.Cds/)
+[TimHanewich.Dataverse](https://www.nuget.org/packages/TimHanewich.Dataverse/)
 Run this command in the .NET CLI:
 
-    dotnet add package TimHanewich.Cds
+    dotnet add package TimHanewich.Dataverse
 
 ### Authenticating with Dataverse
 This class library supports authentication to the Dataverse web API. Use the `CdsAuthenticator` class to authenticate.

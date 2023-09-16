@@ -106,7 +106,7 @@ namespace TimHanewich.Dataverse.Metadata
                 string propformat = prop_Value.Value.ToString();
                 
                 //Auto assign
-                StringFormat ToAssign = TimHanewich.Cds.Metadata.StringFormat.Other;
+                StringFormat ToAssign = TimHanewich.Dataverse.Metadata.StringFormat.Other;
                 foreach (StringFormat sf in Enum.GetValues(typeof(StringFormat)))
                 {
                     if (sf.ToString().ToLower() == propformat.ToLower())
