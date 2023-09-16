@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0</TargetFrameworks>
     <Version>2.5.0</Version>
     <Authors>Tim Hanewich</Authors>
     <Description>Helper library for transacting with the Microsoft Dataverse service (formerly Common Data Service "CDS" or "XRM")</Description>
