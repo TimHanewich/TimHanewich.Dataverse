@@ -265,7 +265,7 @@ namespace TimHanewich.Dataverse
             }
         }
     
-        private HttpRequestMessage PrepareRequestMsg()
+        public HttpRequestMessage PrepareRequestMsg()
         {
             //Construct the request
             HttpRequestMessage req = new HttpRequestMessage();
