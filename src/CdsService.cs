@@ -53,6 +53,8 @@ namespace TimHanewich.Dataverse
 
         #endregion
 
+        #region "Reads"
+
         public async Task<JObject> GetRecordAsync(string setter, Guid id)
         {
             //Construct the query endpoint
@@ -79,46 +81,6 @@ namespace TimHanewich.Dataverse
             return ToReturn;
         }
         
-        public async Task CreateRecordAsync(string setter, JObject json)
-        {
-            //Construct the request
-            HttpRequestMessage req = new HttpRequestMessage();
-            req.Method = HttpMethod.Post;
-            req.RequestUri = new Uri(EnvironmentRequestUrl + setter);
-            req.Headers.Add("Authorization", "Bearer " + AccessToken);
-            req.Content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-
-            //Make the request
-            HttpClient hc = new HttpClient();
-            HttpResponseMessage resp = await hc.SendAsync(req);
-            string cont = await resp.Content.ReadAsStringAsync();
-            if (resp.StatusCode != HttpStatusCode.NoContent)
-            {
-                throw new Exception("Unable to create new record of type '" + setter + "'. Content: " + cont);
-            }
-        }
-
-        public async Task DeleteRecordAsync(string setter, Guid id)
-        {
-            //Construct the endpoint
-            string ep = setter + "(" + id.ToString() + ")";
-
-            //Construct the reuqest
-            HttpRequestMessage req = new HttpRequestMessage();
-            req.Method = HttpMethod.Delete;
-            req.RequestUri = new Uri(EnvironmentRequestUrl + ep);
-            req.Headers.Add("Authorization", "Bearer " + AccessToken);
-            
-            //Make the request
-            HttpClient hc = new HttpClient();
-            HttpResponseMessage msg = await hc.SendAsync(req);
-            if (msg.StatusCode != HttpStatusCode.NoContent)
-            {
-                string ermsg = await msg.Content.ReadAsStringAsync();
-                throw new Exception("Request to delete record '" + id + "' of type '" + setter + "' failed with the following message: " + ermsg);
-            }
-        }
-    
         public async Task<JArray> GetRecordsAsync(string setter)
         {
             //construct the request
@@ -150,28 +112,6 @@ namespace TimHanewich.Dataverse
 
             //Return it
             return ToReturn;
-        }
-    
-        public async Task UpdateRecordAsync(string setter, Guid id, JObject json)
-        {
-            //Construct the endpoint
-            string ep = EnvironmentRequestUrl + setter + "(" + id + ")";
-
-            //Construct the request
-            HttpRequestMessage req = new HttpRequestMessage();
-            req.Method = new HttpMethod("PATCH");
-            req.RequestUri = new Uri(ep);
-            req.Headers.Add("Authorization", "Bearer " + AccessToken);
-            req.Content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            
-            //Make the request
-            HttpClient hc = new HttpClient();
-            HttpResponseMessage msg = await hc.SendAsync(req);
-            if (msg.StatusCode != HttpStatusCode.NoContent)
-            {
-                string cont = await msg.Content.ReadAsStringAsync();
-                throw new Exception("The update record request of type '" + setter + "' and ID '" + id + "' failed. Message content: " + cont);
-            }
         }
     
         public async Task<JArray> ReadAsync(CdsReadOperation operation)
@@ -245,6 +185,70 @@ namespace TimHanewich.Dataverse
             }
         }
 
+        #endregion
+        
+        public async Task CreateRecordAsync(string setter, JObject json)
+        {
+            //Construct the request
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.Method = HttpMethod.Post;
+            req.RequestUri = new Uri(EnvironmentRequestUrl + setter);
+            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            req.Content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+
+            //Make the request
+            HttpClient hc = new HttpClient();
+            HttpResponseMessage resp = await hc.SendAsync(req);
+            string cont = await resp.Content.ReadAsStringAsync();
+            if (resp.StatusCode != HttpStatusCode.NoContent)
+            {
+                throw new Exception("Unable to create new record of type '" + setter + "'. Content: " + cont);
+            }
+        }
+
+        public async Task DeleteRecordAsync(string setter, Guid id)
+        {
+            //Construct the endpoint
+            string ep = setter + "(" + id.ToString() + ")";
+
+            //Construct the reuqest
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.Method = HttpMethod.Delete;
+            req.RequestUri = new Uri(EnvironmentRequestUrl + ep);
+            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            
+            //Make the request
+            HttpClient hc = new HttpClient();
+            HttpResponseMessage msg = await hc.SendAsync(req);
+            if (msg.StatusCode != HttpStatusCode.NoContent)
+            {
+                string ermsg = await msg.Content.ReadAsStringAsync();
+                throw new Exception("Request to delete record '" + id + "' of type '" + setter + "' failed with the following message: " + ermsg);
+            }
+        }
+    
+        public async Task UpdateRecordAsync(string setter, Guid id, JObject json)
+        {
+            //Construct the endpoint
+            string ep = EnvironmentRequestUrl + setter + "(" + id + ")";
+
+            //Construct the request
+            HttpRequestMessage req = new HttpRequestMessage();
+            req.Method = new HttpMethod("PATCH");
+            req.RequestUri = new Uri(ep);
+            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            req.Content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            
+            //Make the request
+            HttpClient hc = new HttpClient();
+            HttpResponseMessage msg = await hc.SendAsync(req);
+            if (msg.StatusCode != HttpStatusCode.NoContent)
+            {
+                string cont = await msg.Content.ReadAsStringAsync();
+                throw new Exception("The update record request of type '" + setter + "' and ID '" + id + "' failed. Message content: " + cont);
+            }
+        }  
+        
         public string ReadEnvironmentRequestUrl()
         {
             return EnvironmentRequestUrl;
