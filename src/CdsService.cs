@@ -187,7 +187,7 @@ namespace TimHanewich.Dataverse
 
         #endregion
         
-        public async Task CreateRecordAsync(string setter, JObject json)
+        public async Task CreateAsync(string setter, JObject json)
         {
             //Construct the request
             HttpRequestMessage req = new HttpRequestMessage();
@@ -206,7 +206,7 @@ namespace TimHanewich.Dataverse
             }
         }
 
-        public async Task DeleteRecordAsync(string setter, Guid id)
+        public async Task DeleteAsync(string setter, Guid id)
         {
             //Construct the endpoint
             string ep = setter + "(" + id.ToString() + ")";
@@ -227,7 +227,7 @@ namespace TimHanewich.Dataverse
             }
         }
     
-        public async Task UpdateRecordAsync(string setter, Guid id, JObject json)
+        public async Task UpdateAsync(string setter, Guid id, JObject json)
         {
             //Construct the endpoint
             string ep = _EnvironmentRequestUrl + setter + "(" + id + ")";
