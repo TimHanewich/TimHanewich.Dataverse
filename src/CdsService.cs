@@ -79,14 +79,14 @@ namespace TimHanewich.Dataverse
             return ToReturn;
         }
         
-        public async Task CreateRecordAsync(string setter, string object_json)
+        public async Task CreateRecordAsync(string setter, JObject json)
         {
             //Construct the request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Post;
             req.RequestUri = new Uri(EnvironmentRequestUrl + setter);
             req.Headers.Add("Authorization", "Bearer " + AccessToken);
-            req.Content = new StringContent(object_json, Encoding.UTF8, "application/json");
+            req.Content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
 
             //Make the request
             HttpClient hc = new HttpClient();
@@ -98,10 +98,10 @@ namespace TimHanewich.Dataverse
             }
         }
 
-        public async Task DeleteRecordAsync(string setter, string id)
+        public async Task DeleteRecordAsync(string setter, Guid id)
         {
             //Construct the endpoint
-            string ep = setter + "(" + id + ")";
+            string ep = setter + "(" + id.ToString() + ")";
 
             //Construct the reuqest
             HttpRequestMessage req = new HttpRequestMessage();
@@ -152,7 +152,7 @@ namespace TimHanewich.Dataverse
             return ToReturn;
         }
     
-        public async Task UpdateRecordAsync(string setter, string id, string object_json)
+        public async Task UpdateRecordAsync(string setter, Guid id, JObject json)
         {
             //Construct the endpoint
             string ep = EnvironmentRequestUrl + setter + "(" + id + ")";
@@ -162,7 +162,7 @@ namespace TimHanewich.Dataverse
             req.Method = new HttpMethod("PATCH");
             req.RequestUri = new Uri(ep);
             req.Headers.Add("Authorization", "Bearer " + AccessToken);
-            req.Content = new StringContent(object_json, Encoding.UTF8, "application/json");
+            req.Content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             
             //Make the request
             HttpClient hc = new HttpClient();
