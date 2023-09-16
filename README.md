@@ -1,6 +1,6 @@
-TimHanewich.Dataverse
+![logo](https://i.imgur.com/ERemSkU.png)
 ==============
-A lightweight library for interacting with Microsoft's Dataverse service (formerly Common Data Service or "XRM"), the native data service of Microsoft's Power Platform and Dynamics 365 platform.  
+**TimHanewich.Dataverse**: A lightweight library for interacting with Microsoft's Dataverse service (formerly Common Data Service or "XRM"), the native data service of Microsoft's Power Platform and Dynamics 365 platform.  
 --------  
 This library alleviates the need to create custom HTTP requests to interact with Dataverse. After providing the service with a few parameters, you can easily interact with Dataverse through the traditional CRUD operators.
 
