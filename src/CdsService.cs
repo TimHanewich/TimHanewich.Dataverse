@@ -249,14 +249,20 @@ namespace TimHanewich.Dataverse
             }
         }  
         
-        public string ReadEnvironmentRequestUrl()
+        public string EnvironmentRequestUrl
         {
-            return _EnvironmentRequestUrl;
+            get
+            {
+                return _EnvironmentRequestUrl;
+            }
         }
 
-        public string ReadAccessToken()
+        public string AccessToken
         {
-            return _AccessToken;
+            get
+            {
+                return _AccessToken;
+            }
         }
     
     
