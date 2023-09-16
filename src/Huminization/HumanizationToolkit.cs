@@ -10,19 +10,27 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Linq;
 
 namespace TimHanewich.Dataverse.Humanization
 {
     public static class HumanizationToolkit
     {
-        public static async Task<JObject> HumanizeAsync(this DataverseService service, string setter, Guid id)
+        public static async Task<JObject> HumanizeAsync(this DataverseService service, string entity_logical_name, Guid id, int depth = 0)
         {
+
+            //Get the entity metadata for this table
+            EntityMetadata emeta = await service.GetEntityMetadataAsync(entity_logical_name);
+
+
+
+
 
             //Make a call to get the payload WITH the text values of the option sets
             HttpRequestMessage req = new HttpRequestMessage();
             req.Headers.Add("Authorization", "Bearer " + service.AccessToken);
             req.Method = HttpMethod.Get;
-            req.RequestUri = new Uri(service.EnvironmentRequestUrl + setter + "(" + id.ToString() + ")");
+            req.RequestUri = new Uri(service.EnvironmentRequestUrl + emeta.EntitySetName + "(" + id.ToString() + ")");
             req.Headers.Add("Prefer", "odata.include-annotations=\"OData.Community.Display.V1.FormattedValue\""); //this is key for getting option set values as text
 
             //Request
@@ -41,29 +49,6 @@ namespace TimHanewich.Dataverse.Humanization
 
 
 
-            //Get metadata summaries - we will use these to jump from the setter name "logical collection name" or "entity set name" to the logical name"
-            EntityMetadataSummary[] summaries = await service.GetEntityMetadataSummariesAsync();
-
-            //Find the right one that matches the setter provided
-            EntityMetadataSummary jumper = null;
-            foreach (EntityMetadataSummary summary in summaries)
-            {
-                if (summary.EntitySetName == setter)
-                {
-                    jumper = summary;
-                }
-            }
-            if (jumper == null)
-            {
-                throw new Exception("Unable to find logical name for table with EntitySetName '" + setter + "'");
-            }
-
-            //Get the entity metadata for this table
-            EntityMetadata emeta = await service.GetEntityMetadataAsync(jumper.LogicalName);
-
-
-
-
 
 
             //Construct a record that we will return
@@ -72,41 +57,59 @@ namespace TimHanewich.Dataverse.Humanization
             {
                 if (property.Value.Type != JTokenType.Null) //Only include fields with values
                 {
-                    foreach (AttributeMetadata ameta in emeta.Attributes) //Try to find the attribute metadata for this property. If we can't find it, move on (skip)!
+                    
+                    //Is it a lookup?
+                    if (property.Name.StartsWith("_") && property.Name.EndsWith("_value")) //it is a lookup
                     {
-                        if (ameta.LogicalName == property.Name) //property name matches attribute metadata "logical name"...
+                        foreach (AttributeMetadata ameta in emeta.Attributes)
+                        {
+                            if (ameta.LogicalName != null && ameta.LogicalName != "" && property.Name.Contains(ameta.LogicalName))
+                            {
+                                if (depth > 0)
+                                {
+                                    JObject ThisHumanizedRecordPointingTo = await service.HumanizeAsync(ameta.Targets[0], Guid.Parse(property.Value.ToString()), depth - 1);
+                                    ToReturn.Add(ameta.DisplayName, ThisHumanizedRecordPointingTo);
+                                }
+                            }
+                        }
+                    }
+                    else //Everything that is NOT a lookup
+                    {
+                        foreach (AttributeMetadata ameta in emeta.Attributes) //Try to find the attribute metadata for this property. If we can't find it, move on (skip)!
                         {
                             if (ameta.DisplayName != null) //It has a display name, so it is meant for public consumption (visible to users)
                             {
-                                //Get property name
-                                string NAME = ameta.DisplayName; //use the DISPLAY NAME of the column
+                                if (ameta.LogicalName == property.Name) //property name matches attribute metadata "logical name"...
+                                {
+                                    //Get property name
+                                    string NAME = ameta.DisplayName; //use the DISPLAY NAME of the column
 
-                                //add it, depending on the column type
-                                if (ameta.AttributeType == AttributeType.Picklist || ameta.AttributeType == AttributeType.Virtual) //option set (choice)
-                                {
-                                    //Find the text property in that payload
-                                    foreach (JProperty prop in RecordWithChoiceText.Properties())
+                                    //add it, depending on the column type
+                                    if (ameta.AttributeType == AttributeType.Picklist || ameta.AttributeType == AttributeType.Virtual) //option set (choice)
                                     {
-                                        if (prop.Name.StartsWith(ameta.LogicalName + "@"))
+                                        //Find the text property in that payload
+                                        foreach (JProperty prop in RecordWithChoiceText.Properties())
                                         {
-                                            ToReturn.Add(NAME, prop.Value.ToString());
-                                        }
-                                    }  
-                                }
-                                else if (ameta.AttributeType == AttributeType.DateTime)
-                                {
-                                    DateTime dt = DateTime.Parse(property.Value.ToString());
-                                    ToReturn.Add(NAME, dt.ToString());
-                                }
-                                else
-                                {
-                                    ToReturn.Add(NAME, property.Value);
+                                            if (prop.Name.StartsWith(ameta.LogicalName + "@"))
+                                            {
+                                                ToReturn.Add(NAME, prop.Value.ToString());
+                                            }
+                                        }  
+                                    }
+                                    else if (ameta.AttributeType == AttributeType.DateTime)
+                                    {
+                                        DateTime dt = DateTime.Parse(property.Value.ToString());
+                                        ToReturn.Add(NAME, dt.ToString());
+                                    }
+                                    else
+                                    {
+                                        ToReturn.Add(NAME, property.Value);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-                
             }
             
             //Get the metadata for this record
