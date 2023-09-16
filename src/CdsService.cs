@@ -55,7 +55,8 @@ namespace TimHanewich.Dataverse
 
         #region "Reads"
 
-        public async Task<JObject> GetRecordAsync(string setter, Guid id)
+        //Read single record
+        public async Task<JObject> ReadAsync(string setter, Guid id)
         {
             //Construct the query endpoint
             string query_ep = setter + "(" + id.ToString() + ")";
@@ -81,7 +82,8 @@ namespace TimHanewich.Dataverse
             return ToReturn;
         }
         
-        public async Task<JArray> GetRecordsAsync(string setter)
+        //Read all records
+        public async Task<JArray> ReadAsync(string setter)
         {
             //construct the request
             HttpRequestMessage req = new HttpRequestMessage();
@@ -114,6 +116,7 @@ namespace TimHanewich.Dataverse
             return ToReturn;
         }
     
+        //Complex read (filtering, top, ordering, etc)
         public async Task<JArray> ReadAsync(CdsReadOperation operation)
         {
             string ToRequestTo = EnvironmentRequestUrl + operation.ToUrlExtension();
@@ -155,7 +158,7 @@ namespace TimHanewich.Dataverse
         }
 
         //Provide an odata portion of the URL, i.e. EntityDefinitions?$select=LogicalName,LogicalCollectionName,DisplayName,IsCustomEntity&$expand=Attributes($select=AttributeType,LogicalName,DisplayName,IsCustomAttribute)&$filter=IsCustomEntity eq true
-        public async Task<JArray> ReadAsync(string url_odata_portion)
+        public async Task<JArray> ReadODataAsync(string url_odata_portion)
         {
             string ToRequestTo = EnvironmentRequestUrl + url_odata_portion;
             HttpRequestMessage req = PrepareRequestMsg();
