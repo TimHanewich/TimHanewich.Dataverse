@@ -13,9 +13,8 @@ namespace TimHanewich.Dataverse
 {
     public class CdsService
     {
-        private string EnvironmentRequestUrl; //This should be something like https://org_name.crm.dynamics.com/api/data/v9.0/
-        
-        private string AccessToken;
+        private string _EnvironmentRequestUrl; //This should be something like https://org_name.crm.dynamics.com/api/data/v9.0/
+        private string _AccessToken;
 
         #region "Constructors"
 
@@ -38,18 +37,16 @@ namespace TimHanewich.Dataverse
             }
 
             //Append the dataverse API extensions
-            EnvironmentRequestUrl = EnvUrlToUse + "/api/data/v9.0/";
+            _EnvironmentRequestUrl = EnvUrlToUse + "/api/data/v9.0/";
 
             //If the provided environment url doesn't start with an https
-            if (EnvironmentRequestUrl.Substring(0, "https://".Length).ToLower() != "https://")
+            if (_EnvironmentRequestUrl.Substring(0, "https://".Length).ToLower() != "https://")
             {
-                EnvironmentRequestUrl = "https://" + EnvironmentRequestUrl;
+                _EnvironmentRequestUrl = "https://" + _EnvironmentRequestUrl;
             }
 
-            AccessToken = access_token;
+            _AccessToken = access_token;
         }
-
-
 
         #endregion
 
@@ -64,8 +61,8 @@ namespace TimHanewich.Dataverse
             //Construct the request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Get;
-            req.RequestUri = new Uri(EnvironmentRequestUrl + query_ep);
-            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            req.RequestUri = new Uri(_EnvironmentRequestUrl + query_ep);
+            req.Headers.Add("Authorization", "Bearer " + _AccessToken);
 
             //Make the request
             HttpClient hc = new HttpClient();
@@ -88,8 +85,8 @@ namespace TimHanewich.Dataverse
             //construct the request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Get;
-            req.RequestUri = new Uri(EnvironmentRequestUrl + setter);
-            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            req.RequestUri = new Uri(_EnvironmentRequestUrl + setter);
+            req.Headers.Add("Authorization", "Bearer " + _AccessToken);
 
             //Make the request
             HttpClient hc = new HttpClient();
@@ -119,7 +116,7 @@ namespace TimHanewich.Dataverse
         //Complex read (filtering, top, ordering, etc)
         public async Task<JArray> ReadAsync(CdsReadOperation operation)
         {
-            string ToRequestTo = EnvironmentRequestUrl + operation.ToUrlExtension();
+            string ToRequestTo = _EnvironmentRequestUrl + operation.ToUrlExtension();
             HttpRequestMessage req = PrepareRequestMsg();
             req.RequestUri = new Uri(ToRequestTo);
             req.Method = HttpMethod.Get;
@@ -160,7 +157,7 @@ namespace TimHanewich.Dataverse
         //Provide an odata portion of the URL, i.e. EntityDefinitions?$select=LogicalName,LogicalCollectionName,DisplayName,IsCustomEntity&$expand=Attributes($select=AttributeType,LogicalName,DisplayName,IsCustomAttribute)&$filter=IsCustomEntity eq true
         public async Task<JArray> ReadODataAsync(string url_odata_portion)
         {
-            string ToRequestTo = EnvironmentRequestUrl + url_odata_portion;
+            string ToRequestTo = _EnvironmentRequestUrl + url_odata_portion;
             HttpRequestMessage req = PrepareRequestMsg();
             req.RequestUri = new Uri(ToRequestTo);
             req.Method = HttpMethod.Get;
@@ -195,8 +192,8 @@ namespace TimHanewich.Dataverse
             //Construct the request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Post;
-            req.RequestUri = new Uri(EnvironmentRequestUrl + setter);
-            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            req.RequestUri = new Uri(_EnvironmentRequestUrl + setter);
+            req.Headers.Add("Authorization", "Bearer " + _AccessToken);
             req.Content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
 
             //Make the request
@@ -217,8 +214,8 @@ namespace TimHanewich.Dataverse
             //Construct the reuqest
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Delete;
-            req.RequestUri = new Uri(EnvironmentRequestUrl + ep);
-            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            req.RequestUri = new Uri(_EnvironmentRequestUrl + ep);
+            req.Headers.Add("Authorization", "Bearer " + _AccessToken);
             
             //Make the request
             HttpClient hc = new HttpClient();
@@ -233,13 +230,13 @@ namespace TimHanewich.Dataverse
         public async Task UpdateRecordAsync(string setter, Guid id, JObject json)
         {
             //Construct the endpoint
-            string ep = EnvironmentRequestUrl + setter + "(" + id + ")";
+            string ep = _EnvironmentRequestUrl + setter + "(" + id + ")";
 
             //Construct the request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = new HttpMethod("PATCH");
             req.RequestUri = new Uri(ep);
-            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            req.Headers.Add("Authorization", "Bearer " + _AccessToken);
             req.Content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             
             //Make the request
@@ -254,12 +251,12 @@ namespace TimHanewich.Dataverse
         
         public string ReadEnvironmentRequestUrl()
         {
-            return EnvironmentRequestUrl;
+            return _EnvironmentRequestUrl;
         }
 
         public string ReadAccessToken()
         {
-            return AccessToken;
+            return _AccessToken;
         }
     
     
@@ -267,7 +264,7 @@ namespace TimHanewich.Dataverse
         {
             //Construct the request
             HttpRequestMessage req = new HttpRequestMessage();
-            req.Headers.Add("Authorization", "Bearer " + AccessToken);
+            req.Headers.Add("Authorization", "Bearer " + _AccessToken);
             return req;
         }
     }
