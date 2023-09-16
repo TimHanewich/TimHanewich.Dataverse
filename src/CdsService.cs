@@ -119,7 +119,7 @@ namespace TimHanewich.Dataverse
             }
         }
     
-        public async Task<JObject[]> GetRecordsAsync(string setter)
+        public async Task<JArray> GetRecordsAsync(string setter)
         {
             //construct the request
             HttpRequestMessage req = new HttpRequestMessage();
@@ -142,14 +142,14 @@ namespace TimHanewich.Dataverse
             {
                 throw new Exception("Returned payload with '" + setter + "' entities came back empty.");
             }
-            List<JObject> ToReturn = new List<JObject>();
+            JArray ToReturn = new JArray();
             foreach (JObject sjo in jo["value"])
             {
                 ToReturn.Add(sjo);
             }
 
             //Return it
-            return ToReturn.ToArray();
+            return ToReturn;
         }
     
         public async Task UpdateRecordAsync(string setter, string id, string object_json)
@@ -174,7 +174,7 @@ namespace TimHanewich.Dataverse
             }
         }
     
-        public async Task<JObject[]> ReadAsync(CdsReadOperation operation)
+        public async Task<JArray> ReadAsync(CdsReadOperation operation)
         {
             string ToRequestTo = EnvironmentRequestUrl + operation.ToUrlExtension();
             HttpRequestMessage req = PrepareRequestMsg();
@@ -187,8 +187,8 @@ namespace TimHanewich.Dataverse
             string bodystr = await resp.Content.ReadAsStringAsync();
             JObject body = JObject.Parse(bodystr);
 
-            //Get and retunr
-            List<JObject> ToReturn = new List<JObject>();
+            //Get and return
+            JArray ToReturn = new JArray();
 
             if (resp.StatusCode == HttpStatusCode.OK)
             {
@@ -211,7 +211,7 @@ namespace TimHanewich.Dataverse
                 throw new Exception("Response from dataverse API: " + resp.StatusCode.ToString() + " - " + bodystr);
             }
 
-            return ToReturn.ToArray();
+            return ToReturn;
         }
 
         //Provide an odata portion of the URL, i.e. EntityDefinitions?$select=LogicalName,LogicalCollectionName,DisplayName,IsCustomEntity&$expand=Attributes($select=AttributeType,LogicalName,DisplayName,IsCustomAttribute)&$filter=IsCustomEntity eq true
