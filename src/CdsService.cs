@@ -53,10 +53,10 @@ namespace TimHanewich.Dataverse
 
         #endregion
 
-        public async Task<JObject> GetRecordAsync(string setter, string id)
+        public async Task<JObject> GetRecordAsync(string setter, Guid id)
         {
             //Construct the query endpoint
-            string query_ep = setter + "(" + id + ")";
+            string query_ep = setter + "(" + id.ToString() + ")";
 
             //Construct the request
             HttpRequestMessage req = new HttpRequestMessage();
