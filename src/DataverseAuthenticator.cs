@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace TimHanewich.Dataverse
 {
-    public class CdsAuthenticator
+    public class DataverseAuthenticator
     {
         //Inputs
         public Guid ClientId {get; set;}
