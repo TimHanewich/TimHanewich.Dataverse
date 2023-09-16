@@ -7,7 +7,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace TimHanewich.Cds
+namespace TimHanewich.Dataverse
 {
     public class CdsAuthenticator
     {

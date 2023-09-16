@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
-namespace TimHanewich.Cds.Metadata
+namespace TimHanewich.Dataverse.Metadata
 {
     public class EntityMetadata
     {

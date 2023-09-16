@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TimHanewich.Cds.AdvancedRead
+namespace TimHanewich.Dataverse.AdvancedRead
 {
     public class CdsReadOperation : TableSelection
     {

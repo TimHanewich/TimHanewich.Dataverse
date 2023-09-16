@@ -1,6 +1,6 @@
 using System;
 
-namespace TimHanewich.Cds
+namespace TimHanewich.Dataverse
 {
     public class CdsToolkit
     {

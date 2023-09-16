@@ -2,7 +2,7 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace TimHanewich.Cds.Metadata
+namespace TimHanewich.Dataverse.Metadata
 {
     public class AttributeMetadata
     {

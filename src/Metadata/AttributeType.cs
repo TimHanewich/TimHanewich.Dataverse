@@ -1,6 +1,6 @@
 using System;
 
-namespace TimHanewich.Cds.Metadata
+namespace TimHanewich.Dataverse.Metadata
 {
     public enum AttributeType
     {

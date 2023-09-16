@@ -1,6 +1,6 @@
 using System;
 
-namespace TimHanewich.Cds.AdvancedRead
+namespace TimHanewich.Dataverse.AdvancedRead
 {
     public enum OrderDirection
     {

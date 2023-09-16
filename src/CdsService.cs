@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Text;
 using System.Collections.Generic;
-using TimHanewich.Cds.AdvancedRead;
+using TimHanewich.Dataverse.AdvancedRead;
 
 
-namespace TimHanewich.Cds
+namespace TimHanewich.Dataverse
 {
     public class CdsService
     {

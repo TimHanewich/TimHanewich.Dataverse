@@ -1,6 +1,6 @@
 using System;
 
-namespace TimHanewich.Cds.Helpers
+namespace TimHanewich.Dataverse.Helpers
 {
     public class PropertyValuePair
     {
