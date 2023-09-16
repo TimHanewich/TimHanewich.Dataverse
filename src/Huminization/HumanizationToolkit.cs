@@ -101,7 +101,7 @@ namespace TimHanewich.Dataverse.Humanization
                                         DateTime dt = DateTime.Parse(property.Value.ToString());
                                         ToReturn.Add(NAME, dt.ToString());
                                     }
-                                    else
+                                    else if (ameta.AttributeType != AttributeType.Uniqueidentifier) //Everything else BESIDES the unique id
                                     {
                                         ToReturn.Add(NAME, property.Value);
                                     }
