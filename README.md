@@ -39,17 +39,19 @@ In the above example, replace "YourOrgName" with the organization name for your 
 Replace "YourAccessToken" with the access token that you have received after authenticating through either the OAuth authentication flow or the above authentication using the `DataverseAuthenticator` class (recommended).
 
 ### Creating a record
-We will use the `CreateRecordAsync` method of the DataverseService to create a new record. This method accepts two parameters:  
-`setter` - the setter (schema) name of the entity. This can be found by going to https://<your_org_name>.crm.dynamics.com/api/data/v9.0/ in an authenticated window.  
-`object_json` - The JSON content of the record that you are creating.  
+We will use the `CreateAsync` method of the DataverseService to create a new record. This method accepts two parameters:  
+- `setter` - the setter (schema) name of the entity. This can be found by going to https://<your_org_name>.crm.dynamics.com/api/data/v9.0/ in an authenticated window.  
+- `json` - The JSON (`JObject`) content of the record that you are creating.  
 
 A complete example of initializing a Dataverse Service and creating a new account record:
 
-    DataverseService cds = new DataverseService("YourOrgName", "YourAccessToken");
-    await cds.CreateRecordAsync("accounts", "{\"name\":\"123 Industries\"}");
+    DataverseService dv = new DataverseService("YourOrgName", "YourAccessToken");
+    JObject jo = new JObject();
+    jo.Add("name", "Microsoft"); //Specify name column of accounts table
+    await dv.CreateAsync("accounts", jo).Wait();
 
 ### Reading, Updating, and Deleting
-The reading, updating, and deleting methods are very similar to the `CreateRecordAsync` method that is detailed above. The only difference is that these three methods also have a parameter called `id` which serves as the unique identifier of the record that you are trying to transact on.  
+The reading, updating, and deleting methods are very similar to the `CreateAsync` method that is detailed above. The only difference is that these three methods also have a parameter called `id` which serves as the unique identifier of the record that you'd like to transact on.  
 This `id` parameter is the GUID value associated with the record that you can find in Dynamics 365 or the Power Platform Dataverse portal.
 
 ## Working with Tables & Attributes
@@ -89,7 +91,7 @@ If you know the unique ID of the record you would like data for, you can request
 DataverseReadOperation read = new DataverseReadOperation();
 read.TableIdentifier = "contacts";
 read.RecordId = Guid.Parse("9b8b1f4d-da14-ec11-b6e6-000d3a99fcc1");
-JObject[] QueryResults = await service.ExecuteDataverseReadOperationAsync(read);
+JArray QueryResults = await service.ReadAsync(read);
 Console.WriteLine("Your one record:");
 Console.WriteLine(QueryResults[0].ToString());
 ```
@@ -115,7 +117,7 @@ filter.Operator = ComparisonOperator.GreaterThan;
 filter.SetValue(1000);
 read.AddFilter(filter);
 
-JObject[] results = await service.ExecuteDataverseReadOperationAsync(read);
+JArray results = await service.ExecuteDataverseReadOperationAsync(read);
 ```
 If you need to use multiple filter statements, you can also do this:
 ```
@@ -134,7 +136,7 @@ filter2.ColumnName = "customer";
 filter2.SetValue(Guid.Parse("9b8b1f4d-da14-ec11-b6e6-000d3a99fcc1"));
 read.AddFilter(filter2);
 
-JObject[] results = await service.ExecuteDataverseReadOperationAsync(read);
+JArray results = await service.ExecuteDataverseReadOperationAsync(read);
 ```
 The key above is to define the `LogicalOperatorPrefix` property of the second filter. This is the logical prefix (for example "and", "or") that will be added between this filter and the preceeding filter.
 
