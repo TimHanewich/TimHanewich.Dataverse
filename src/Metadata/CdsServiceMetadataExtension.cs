@@ -12,13 +12,13 @@ namespace TimHanewich.Dataverse.Metadata
     {
         public static async Task<EntityMetadataSummary[]> GetEntityMetadataSummariesAsync(this CdsService service)
         {
-            string url = service.ReadEnvironmentRequestUrl();
+            string url = service.EnvironmentRequestUrl;
             
             //Prepare request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Get;
             req.RequestUri = new Uri(url + "EntityDefinitions?$select=LogicalName,SchemaName,LogicalCollectionName,CollectionSchemaName,EntitySetName,DisplayName,IsCustomEntity, DisplayCollectionName");
-            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            req.Headers.Add("Authorization", "Bearer " + service.AccessToken);
 
             //Make the request
             HttpClient hc = new HttpClient();
@@ -61,26 +61,26 @@ namespace TimHanewich.Dataverse.Metadata
     
         public static async Task<EntityMetadata> GetEntityMetadataAsync(this CdsService service, string entity_logical_name)
         {
-            string url = service.ReadEnvironmentRequestUrl() + "EntityDefinitions(LogicalName='" + entity_logical_name + "')?$expand=Attributes";
+            string url = service.EnvironmentRequestUrl + "EntityDefinitions(LogicalName='" + entity_logical_name + "')?$expand=Attributes";
             EntityMetadata ToReturn = await service.GetEntityMetadataFromRequestUrlAsync(url);
             return ToReturn;
         }
 
         public static async Task<EntityMetadata> GetEntityMetadataAsync(this CdsService service, Guid metadata_id)
         {
-            string url = service.ReadEnvironmentRequestUrl() + "EntityDefinitions(" + metadata_id.ToString() + ")?$expand=Attributes";
+            string url = service.EnvironmentRequestUrl + "EntityDefinitions(" + metadata_id.ToString() + ")?$expand=Attributes";
             EntityMetadata ToReturn = await service.GetEntityMetadataFromRequestUrlAsync(url);
             return ToReturn;
         }
 
         public static async Task<Choice[]> GetAllChoiceMetadataAsync(this CdsService service)
         {
-            string url = service.ReadEnvironmentRequestUrl() + "GlobalOptionSetDefinitions";
+            string url = service.EnvironmentRequestUrl + "GlobalOptionSetDefinitions";
             HttpClient hc = new HttpClient();
             HttpRequestMessage req = new HttpRequestMessage();
             req.RequestUri = new Uri(url);
             req.Method = HttpMethod.Get;
-            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            req.Headers.Add("Authorization", "Bearer " + service.AccessToken);
             HttpResponseMessage resp = await hc.SendAsync(req);
             string content = await resp.Content.ReadAsStringAsync();
             if (resp.StatusCode != HttpStatusCode.OK)
@@ -102,12 +102,12 @@ namespace TimHanewich.Dataverse.Metadata
         //If you find an attribute of a table that uses a picklist, this will let you find the logical name of the global option set that that attribute points to
         public static async Task<string> FindPicklistGlobalOptionSetAsync(this CdsService service, string entity_logical_name, Guid attribute_id)
         {
-            string url = service.ReadEnvironmentRequestUrl() + "EntityDefinitions(LogicalName='" + entity_logical_name + "')/Attributes(" + attribute_id.ToString() + ")/Microsoft.Dynamics.CRM.PicklistAttributeMetadata?$expand=OptionSet";
+            string url = service.EnvironmentRequestUrl + "EntityDefinitions(LogicalName='" + entity_logical_name + "')/Attributes(" + attribute_id.ToString() + ")/Microsoft.Dynamics.CRM.PicklistAttributeMetadata?$expand=OptionSet";
             HttpClient hc = new HttpClient();
             HttpRequestMessage req = new HttpRequestMessage();
             req.RequestUri = new Uri(url);
             req.Method = HttpMethod.Get;
-            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            req.Headers.Add("Authorization", "Bearer " + service.AccessToken);
             HttpResponseMessage resp = await hc.SendAsync(req);
             string content = await resp.Content.ReadAsStringAsync();
             if (resp.StatusCode != HttpStatusCode.OK)
@@ -144,12 +144,12 @@ namespace TimHanewich.Dataverse.Metadata
         //Get one to many relationships where this entity is pointing to any other entity ("entities this entity points to")
         public static async Task<OneToManyRelationship[]> GetOneToManyRelationshipsByReferencingEntityAsync(this CdsService service, string entity_logical_name)
         {
-            string url = service.ReadEnvironmentRequestUrl() + "RelationshipDefinitions/Microsoft.Dynamics.CRM.OneToManyRelationshipMetadata?$filter=ReferencingEntity eq '" + entity_logical_name + "'";
+            string url = service.EnvironmentRequestUrl + "RelationshipDefinitions/Microsoft.Dynamics.CRM.OneToManyRelationshipMetadata?$filter=ReferencingEntity eq '" + entity_logical_name + "'";
             HttpClient hc = new HttpClient();
             HttpRequestMessage req = new HttpRequestMessage();
             req.RequestUri = new Uri(url);
             req.Method = HttpMethod.Get;
-            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            req.Headers.Add("Authorization", "Bearer " + service.AccessToken);
             HttpResponseMessage resp = await hc.SendAsync(req);
             string content = await resp.Content.ReadAsStringAsync();
             if (resp.StatusCode != HttpStatusCode.OK)
@@ -164,12 +164,12 @@ namespace TimHanewich.Dataverse.Metadata
         //Get one to many relationships where this entity is being pointed at by any other entity ("entities that point at this entity")
         public static async Task<OneToManyRelationship[]> GetOneToManyRelationshipsByReferencedEntityAsync(this CdsService service, string entity_logical_name)
         {
-            string url = service.ReadEnvironmentRequestUrl() + "RelationshipDefinitions/Microsoft.Dynamics.CRM.OneToManyRelationshipMetadata?$filter=ReferencedEntity eq '" + entity_logical_name + "'";
+            string url = service.EnvironmentRequestUrl + "RelationshipDefinitions/Microsoft.Dynamics.CRM.OneToManyRelationshipMetadata?$filter=ReferencedEntity eq '" + entity_logical_name + "'";
             HttpClient hc = new HttpClient();
             HttpRequestMessage req = new HttpRequestMessage();
             req.RequestUri = new Uri(url);
             req.Method = HttpMethod.Get;
-            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            req.Headers.Add("Authorization", "Bearer " + service.AccessToken);
             HttpResponseMessage resp = await hc.SendAsync(req);
             string content = await resp.Content.ReadAsStringAsync();
             if (resp.StatusCode != HttpStatusCode.OK)
@@ -240,12 +240,12 @@ namespace TimHanewich.Dataverse.Metadata
 
         public static async Task<ManyToManyRelationship[]> GetManyToManyRelationshipsAsync(this CdsService service, string entity_logical_name)
         {
-            string url = service.ReadEnvironmentRequestUrl() + "RelationshipDefinitions/Microsoft.Dynamics.CRM.ManyToManyRelationshipMetadata?$filter=Entity1LogicalName eq '" + entity_logical_name + "' or Entity2LogicalName eq '" + entity_logical_name + "'";
+            string url = service.EnvironmentRequestUrl + "RelationshipDefinitions/Microsoft.Dynamics.CRM.ManyToManyRelationshipMetadata?$filter=Entity1LogicalName eq '" + entity_logical_name + "' or Entity2LogicalName eq '" + entity_logical_name + "'";
             HttpClient hc = new HttpClient();
             HttpRequestMessage req = new HttpRequestMessage();
             req.RequestUri = new Uri(url);
             req.Method = HttpMethod.Get;
-            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            req.Headers.Add("Authorization", "Bearer " + service.AccessToken);
             HttpResponseMessage resp = await hc.SendAsync(req);
             string content = await resp.Content.ReadAsStringAsync();
             if (resp.StatusCode != HttpStatusCode.OK)
@@ -323,7 +323,7 @@ namespace TimHanewich.Dataverse.Metadata
             //Prepare the request
             HttpRequestMessage req = new HttpRequestMessage();
             req.Method = HttpMethod.Get;
-            req.Headers.Add("Authorization", "Bearer " + service.ReadAccessToken());
+            req.Headers.Add("Authorization", "Bearer " + service.AccessToken);
             req.RequestUri = new Uri(url);
             
             //Make the request
