@@ -18,7 +18,7 @@ namespace TimHanewich.Dataverse.Metadata
             JObject jo = JObject.Parse(json);
 
             ToReturn.Name = jo.Property("Name").Value.ToString();
-            ToReturn.DisplayName = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayName");
+            ToReturn.DisplayName = DataverseServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayName");
             ToReturn.MetadataId = Guid.Parse(jo.Property("MetadataId").Value.ToString());
             
             //Options

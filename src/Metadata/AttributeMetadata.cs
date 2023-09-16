@@ -38,16 +38,16 @@ namespace TimHanewich.Dataverse.Metadata
             AttributeMetadata ToReturn = new AttributeMetadata();
 
             ToReturn.MetadataId = Guid.Parse(jo.Property("MetadataId").Value.ToString());
-            ToReturn.AttributeType = CdsServiceMetadataExtension.AttributeTypeApiStringToEnum(jo.Property("AttributeType").Value.ToString());
+            ToReturn.AttributeType = DataverseServiceMetadataExtension.AttributeTypeApiStringToEnum(jo.Property("AttributeType").Value.ToString());
             ToReturn.ColumnNumber = Convert.ToInt32(jo.Property("ColumnNumber").Value.ToString());
             ToReturn.IntroducedVersion = new Version(jo.Property("IntroducedVersion").Value.ToString());
             ToReturn.IsManaged = Convert.ToBoolean(jo.Property("IsManaged").Value.ToString());
             ToReturn.LogicalName = jo.Property("LogicalName").Value.ToString();
             ToReturn.SchemaName = jo.Property("SchemaName").Value.ToString();
-            ToReturn.Description = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "Description");
-            ToReturn.DisplayName = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayName");
-            ToReturn.IsAuditEnabled = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsAuditEnabled");
-            ToReturn.IsCustomizable = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomizable");
+            ToReturn.Description = DataverseServiceMetadataExtension.GetLocalizedLabel(jo, "Description");
+            ToReturn.DisplayName = DataverseServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayName");
+            ToReturn.IsAuditEnabled = DataverseServiceMetadataExtension.GetNestedBoolean(jo, "IsAuditEnabled");
+            ToReturn.IsCustomizable = DataverseServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomizable");
             ToReturn.IsCustomAttribute = Convert.ToBoolean(jo.Property("IsCustomAttribute").Value.ToString());
 
             //Require level
@@ -79,7 +79,7 @@ namespace TimHanewich.Dataverse.Metadata
             JProperty prop_Format = jo.Property("Format");
             if (prop_Format != null)
             {
-                ToReturn.Format = CdsServiceMetadataExtension.FormatApiStringToEnum(jo.Property("Format").Value.ToString());
+                ToReturn.Format = DataverseServiceMetadataExtension.FormatApiStringToEnum(jo.Property("Format").Value.ToString());
             }
             else
             {

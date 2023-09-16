@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace TimHanewich.Dataverse.AdvancedRead
 {
-    public class CdsReadOperation : TableSelection
+    public class DataverseReadOperation : TableSelection
     {
         public Guid? RecordId {get; set;}
         public TableSelection Expand {get; set;}
         public int? Top {get; set;}
 
         //Filters
-        private List<CdsReadFilter> _Filters;
-        public CdsReadFilter[] Filters
+        private List<DataverseReadFilter> _Filters;
+        public DataverseReadFilter[] Filters
         {
             get
             {
@@ -20,8 +20,8 @@ namespace TimHanewich.Dataverse.AdvancedRead
         }
 
         //Sorting
-        private List<CdsReadOrder> _Ordering;
-        public CdsReadOrder[] Ordering
+        private List<DataverseReadOrder> _Ordering;
+        public DataverseReadOrder[] Ordering
         {
             get
             {
@@ -29,21 +29,21 @@ namespace TimHanewich.Dataverse.AdvancedRead
             }
         }
 
-        public CdsReadOperation()
+        public DataverseReadOperation()
         {
             RecordId = null;
-            _Filters = new List<CdsReadFilter>();
-            _Ordering = new List<CdsReadOrder>();
+            _Filters = new List<DataverseReadFilter>();
+            _Ordering = new List<DataverseReadOrder>();
         }
 
         #region "Filters operations"
 
-        public void AddFilter(CdsReadFilter filter)
+        public void AddFilter(DataverseReadFilter filter)
         {
             _Filters.Add(filter);
         }
 
-        public void RemoveFilter(CdsReadFilter filter)
+        public void RemoveFilter(DataverseReadFilter filter)
         {
             _Filters.Remove(filter);
         }
@@ -57,12 +57,12 @@ namespace TimHanewich.Dataverse.AdvancedRead
 
         #region "Ordering"
 
-        public void AddOrdering(CdsReadOrder order)
+        public void AddOrdering(DataverseReadOrder order)
         {
             _Ordering.Add(order);
         }
 
-        public void RemoveOrdering(CdsReadOrder order)
+        public void RemoveOrdering(DataverseReadOrder order)
         {
             _Ordering.Remove(order);
         }
@@ -167,7 +167,7 @@ namespace TimHanewich.Dataverse.AdvancedRead
             if (Filters.Length > 0)
             {
                 ToReturn = "$filter=";
-                foreach (CdsReadFilter filter in Filters)
+                foreach (DataverseReadFilter filter in Filters)
                 {
                     ToReturn = ToReturn + filter.ToString() + " ";
                 }
@@ -225,7 +225,7 @@ namespace TimHanewich.Dataverse.AdvancedRead
             if (Ordering.Length > 0)
             {
                 ToReturn = "$orderby=";
-                foreach (CdsReadOrder order in Ordering)
+                foreach (DataverseReadOrder order in Ordering)
                 {
                     ToReturn = ToReturn + order.ColumnName + " ";
                     if (order.Direction == OrderDirection.Ascending)

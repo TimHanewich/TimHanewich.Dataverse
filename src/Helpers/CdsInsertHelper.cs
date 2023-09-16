@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace TimHanewich.Dataverse.Helpers
 {
-    public class CdsInsertHelper
+    public class DataverseInsertHelper
     {
         private List<PropertyValuePair> PVPs;
 
-        public CdsInsertHelper()
+        public DataverseInsertHelper()
         {
             PVPs = new List<PropertyValuePair>();
         }

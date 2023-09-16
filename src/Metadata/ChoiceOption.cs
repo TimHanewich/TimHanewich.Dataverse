@@ -15,7 +15,7 @@ namespace TimHanewich.Dataverse.Metadata
             JObject jo = JObject.Parse(json);
             
             ToReturn.Value = Convert.ToInt64(jo.Property("Value").Value.ToString());
-            ToReturn.Label = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "Label");
+            ToReturn.Label = DataverseServiceMetadataExtension.GetLocalizedLabel(jo, "Label");
 
             return ToReturn;
         }

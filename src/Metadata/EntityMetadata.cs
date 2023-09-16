@@ -69,13 +69,13 @@ namespace TimHanewich.Dataverse.Metadata
             ToReturn.IsPrivate = Convert.ToBoolean(jo.Property("IsPrivate").Value.ToString());
             ToReturn.CreatedOn = DateTime.Parse(jo.Property("CreatedOn").Value.ToString());
             ToReturn.ModifiedOn = DateTime.Parse(jo.Property("ModifiedOn").Value.ToString());
-            ToReturn.Description = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "Description");
-            ToReturn.DisplayCollectioName = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayCollectionName");
-            ToReturn.DisplayName = CdsServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayName");
-            ToReturn.IsAuditEnabled = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsAuditEnabled");
-            ToReturn.IsCustomizable = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomizable");
-            ToReturn.IsDuplicateDetectionEnabled = CdsServiceMetadataExtension.GetNestedBoolean(jo, "IsDuplicateDetectionEnabled");
-            ToReturn.CanCreateAttributes = CdsServiceMetadataExtension.GetNestedBoolean(jo, "CanCreateAttributes");
+            ToReturn.Description = DataverseServiceMetadataExtension.GetLocalizedLabel(jo, "Description");
+            ToReturn.DisplayCollectioName = DataverseServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayCollectionName");
+            ToReturn.DisplayName = DataverseServiceMetadataExtension.GetLocalizedLabel(jo, "DisplayName");
+            ToReturn.IsAuditEnabled = DataverseServiceMetadataExtension.GetNestedBoolean(jo, "IsAuditEnabled");
+            ToReturn.IsCustomizable = DataverseServiceMetadataExtension.GetNestedBoolean(jo, "IsCustomizable");
+            ToReturn.IsDuplicateDetectionEnabled = DataverseServiceMetadataExtension.GetNestedBoolean(jo, "IsDuplicateDetectionEnabled");
+            ToReturn.CanCreateAttributes = DataverseServiceMetadataExtension.GetNestedBoolean(jo, "CanCreateAttributes");
 
             //Get all the attributes (if they exist)
             JProperty prop_Attributes = jo.Property("Attributes");

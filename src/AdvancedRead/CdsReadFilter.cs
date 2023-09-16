@@ -2,7 +2,7 @@ using System;
 
 namespace TimHanewich.Dataverse.AdvancedRead
 {
-    public class CdsReadFilter
+    public class DataverseReadFilter
     {
         public LogicalOperator? LogicalOperatorPrefix {get; set;}
         public string ColumnName {get; set;}
@@ -18,7 +18,7 @@ namespace TimHanewich.Dataverse.AdvancedRead
             }
         }
 
-        public CdsReadFilter()
+        public DataverseReadFilter()
         {
             LogicalOperatorPrefix = null;
             ColumnName = null;

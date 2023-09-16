@@ -11,23 +11,23 @@ using TimHanewich.Dataverse.AdvancedRead;
 
 namespace TimHanewich.Dataverse
 {
-    public class CdsService
+    public class DataverseService
     {
         private string _EnvironmentRequestUrl; //This should be something like https://org_name.crm.dynamics.com/api/data/v9.0/
         private string _AccessToken;
 
         #region "Constructors"
 
-        public CdsService()
+        public DataverseService()
         {
 
         }
 
         /// <summary>
-        /// Initializes a new CdsService
+        /// Initializes a new DataverseService
         /// </summary>
         /// <param name="environment_url">The URL to your Dataverse environment. (i.e. 'https://org7671dd37.crm.dynamics.com/')</param>
-        public CdsService(string environment_url, string access_token)
+        public DataverseService(string environment_url, string access_token)
         {
             //Get the environment URL to use (trim the trailing slash)
             string EnvUrlToUse = environment_url;
@@ -114,7 +114,7 @@ namespace TimHanewich.Dataverse
         }
     
         //Complex read (filtering, top, ordering, etc)
-        public async Task<JArray> ReadAsync(CdsReadOperation operation)
+        public async Task<JArray> ReadAsync(DataverseReadOperation operation)
         {
             string ToRequestTo = _EnvironmentRequestUrl + operation.ToUrlExtension();
             HttpRequestMessage req = PrepareRequestMsg();
