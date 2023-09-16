@@ -8,6 +8,7 @@ namespace TimHanewich.Dataverse.Metadata
     {
         public Guid MetadataId {get; set;}
         public AttributeType AttributeType {get; set;}
+        public string AttributeOf {get; set;}
         public int ColumnNumber {get; set;}
         public Version IntroducedVersion {get; set;}
         public bool IsManaged {get; set;}
@@ -134,6 +135,24 @@ namespace TimHanewich.Dataverse.Metadata
                         ToReturn.Targets = targets;
                     }
                 }
+            }
+
+            //AttributeOf
+            JProperty prop_AttributeOf = jo.Property("AttributeOf");
+            if (prop_AttributeOf != null)
+            {
+                if (prop_AttributeOf.Value.Type != JTokenType.Null)
+                {
+                    ToReturn.AttributeOf = prop_AttributeOf.Value.ToString();
+                }
+                else
+                {
+                    ToReturn.AttributeOf = null;
+                }
+            }
+            else
+            {
+                ToReturn.AttributeOf = null;
             }
 
             
