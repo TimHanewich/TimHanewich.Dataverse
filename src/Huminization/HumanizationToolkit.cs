@@ -46,9 +46,8 @@ namespace TimHanewich.Dataverse.Humanization
             JObject RecordWithChoiceText = JObject.Parse(content);
 
 
-
-
-
+            //Create a "dictionary" of hummanized payloads that can be used to ensure we don't hummanize the same record several times, at least on this one level (save bandwidth, compute time)
+            Dictionary<Guid, JObject> HummanizedDict = new Dictionary<Guid, JObject>();
 
 
             //Construct a record that we will return
@@ -67,8 +66,26 @@ namespace TimHanewich.Dataverse.Humanization
                             {
                                 if (depth > 0)
                                 {
-                                    JObject ThisHumanizedRecordPointingTo = await service.HumanizeAsync(ameta.Targets[0], Guid.Parse(property.Value.ToString()), depth - 1);
-                                    ToReturn.Add(ameta.DisplayName, ThisHumanizedRecordPointingTo);
+
+                                    //Do we have it in the dictionary?
+                                    JObject HummanizedRelatedRecord = null;
+                                    foreach (KeyValuePair<Guid, JObject> kvp in HummanizedDict)
+                                    {
+                                        if (kvp.Key == Guid.Parse(property.Value.ToString()))
+                                        {
+                                            HummanizedRelatedRecord = kvp.Value;
+                                        }
+                                    }
+
+                                    //If we did not retrieve it from the dictionary, retrieve it from Dataverse
+                                    if (HummanizedRelatedRecord == null)
+                                    {
+                                        HummanizedRelatedRecord = await service.HumanizeAsync(ameta.Targets[0], Guid.Parse(property.Value.ToString()), depth - 1);
+                                        HummanizedDict.Add(Guid.Parse(property.Value.ToString()), HummanizedRelatedRecord); //Add it to the dictionary for further use next time, if needed
+                                    }
+
+                                    //Add it
+                                    ToReturn.Add(ameta.DisplayName, HummanizedRelatedRecord);
                                 }
                             }
                         }
