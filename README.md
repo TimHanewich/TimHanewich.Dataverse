@@ -164,3 +164,227 @@ related.AddColumn("dateofbirth");
 read.Expand = related;
 ```
 
+## Humanization
+In 2023 and beyond, using private data with **large language models** like the "GPT" series by OpenAI is a commonly desired implementation across industries. As part of the *prompt engineering* process, developers must incorporate private data into prompts to these large language models. The data must be in a *understandable*, *legible*, and *human-readable* format for the LLM to understand and use in its response. I call this process *humanization*.
+
+I've developed an algorithm to automatically perform this **humanization** process, **transforming the data from its raw form to a more human-readable form**. You can use the humanization capabilities of this package via the `HumanizeAsync` function of the `TimHanewich.Dataverse.Humanization` namespace:
+```
+DataverseService s = new DataverseService("<YOUR DATAVERSE INSTANCE URL>", "<DATAVERSE ACCESS TOKEN>");
+JObject obj = await s.HumanizeAsync("cra0f_animal", Guid.Parse("79f11b28-30c7-ed11-b597-000d3a8c2011"));
+Console.WriteLine(obj.ToString());
+```
+In the code above, you must provide the `HummanizeAsync` method two parameters:  
+- The **logical name** of the table.
+- The **unqiue identifier** (GUID) of the record you'd like to hummanize.
+
+The code above will turn a **raw** Dataverse record, that looks like this:
+```
+{
+  "@odata.context": "https://org3d1a4090.crm.dynamics.com/api/data/v9.0/$metadata#cra0f_animals/$entity",
+  "@odata.etag": "W/\"4292472\"",
+  "cra0f_favoritespecies": "238080000,238080001,238080002",
+  "cra0f_dateofbirth": "2022-09-01T00:00:00Z",
+  "_owningbusinessunit_value": "5bd9dba0-c95c-ed11-9562-000d3a1df4a2",
+  "_cra0f_homepen_value": "95fc11dc-2fc7-ed11-b597-000d3a8c2011",
+  "cra0f_species": 238080001,
+  "statecode": 0,
+  "statuscode": 1,
+  "_cra0f_mother_value": "4f6a9a15-30c7-ed11-b597-000d3a8c2011",
+  "_createdby_value": "4de0dba0-c95c-ed11-9562-000d3a1df4a2",
+  "timezoneruleversionnumber": 4,
+  "_ownerid_value": "4de0dba0-c95c-ed11-9562-000d3a1df4a2",
+  "modifiedon": "2023-09-16T20:18:46Z",
+  "_owninguser_value": "4de0dba0-c95c-ed11-9562-000d3a1df4a2",
+  "_modifiedby_value": "4de0dba0-c95c-ed11-9562-000d3a1df4a2",
+  "versionnumber": 4292472,
+  "cra0f_name": "Phillip Piggy",
+  "createdon": "2023-03-20T15:01:57Z",
+  "cra0f_animalid": "79f11b28-30c7-ed11-b597-000d3a8c2011",
+  "overriddencreatedon": null,
+  "cra0f_wishesitwerea": null,
+  "importsequencenumber": null,
+  "_modifiedonbehalfby_value": null,
+  "utcconversiontimezonecode": null,
+  "_createdonbehalfby_value": null,
+  "_owningteam_value": null
+}
+```
+Into *this*, a much more human-readable form that can easily be understood and leverage by a large language model in answering questions. As you can see below, the "internal" names of the columns are converted to their display names, the values are translated into their *labels*, and arbitrary values that are rather specific to Dataverse are trimmed from the payload:
+```
+{
+  "Favorite Species": "Cow; Pig; Chicken",
+  "Date of Birth": "9/1/2022 12:00:00 AM",
+  "Species": "Pig",
+  "Modified On": "9/16/2023 8:18:46 PM",
+  "Name": "Phillip Piggy",
+  "Created On": "3/20/2023 3:01:57 PM"
+}
+```
+The `HummanizeAsync` method also has a third (optional) parameter: `depth` (integer). This defines at what relational "depth" the hummanization should occur. For example, if one of the fields of the table you're hummanizing is a **lookup** field, specifing a depth > 0 will also hummanize the record that is being pointed to and **append this related record** to the returned payload. For example, at a depth of **1**, this would be the response instead:
+```
+{
+  "Favorite Species": "Cow; Pig; Chicken",
+  "Date of Birth": "9/1/2022 12:00:00 AM",
+  "Owning Business Unit": {
+    "Inheritance Mask": 1023,
+    "Modified On": "11/5/2022 5:20:58 AM",
+    "Created On": "11/5/2022 5:20:58 AM",
+    "Is Disabled": false,
+    "Name": "org3d1a4090"
+  },
+  "Home Pen": {
+    "Modified On": "3/20/2023 2:59:49 PM",
+    "Name": "Wayne Locks",
+    "Created On": "3/20/2023 2:59:49 PM"
+  },
+  "Species": "Pig",
+  "Mother": {
+    "Date of Birth": "2/16/2023 12:00:00 AM",
+    "Species": "Chicken",
+    "Modified On": "3/20/2023 3:01:26 PM",
+    "Name": "Caitlyn Chicky",
+    "Created On": "3/20/2023 3:01:26 PM"
+  },
+  "Created By": {
+    "Integration user mode": false,
+    "Main Phone": "425-555-0100",
+    "Access Mode": "Read-Write",
+    "First Name": "System",
+    "Restricted Access Mode": false,
+    "Incoming Email Delivery Method": "Server-Side Synchronization or Email Router",
+    "Primary Email": "admin@D365DemoTS909196.OnMicrosoft.com",
+    "Unique user identity id": 3,
+    "User Name": "admin@D365DemoTS909196.onmicrosoft.com",
+    "Created On": "11/5/2022 5:21:02 AM",
+    "Windows Live ID": "admin@D365DemoTS909196.onmicrosoft.com",
+    "Full Name": "System Administrator",
+    "License Type": "Enterprise",
+    "Modified On": "11/10/2022 2:50:51 PM",
+    "Azure State": "Exists",
+    "Default Filters Populated": false,
+    "Outgoing Email Delivery Method": "Server-Side Synchronization or Email Router",
+    "Address": "US",
+    "Primary Email Status": "Approved",
+    "Last Name": "Administrator",
+    "Mobile Phone": "425-555-0101",
+    "User Synced": true,
+    "User License Type": 59,
+    "Deleted State": "Not deleted",
+    "Default OneDrive for Business Folder Name": "CRM",
+    "Email Address O365 Admin Approval Status": false,
+    "Invitation Status": "Invitation Not Sent",
+    "Yomi Full Name": "System Administrator",
+    "Status": false,
+    "User PUID": "100320013C21A393",
+    "Country/Region": "US",
+    "User Licensed": true
+  },
+  "Owner": {
+    "Integration user mode": false,
+    "Main Phone": "425-555-0100",
+    "Access Mode": "Read-Write",
+    "First Name": "System",
+    "Restricted Access Mode": false,
+    "Incoming Email Delivery Method": "Server-Side Synchronization or Email Router",
+    "Primary Email": "admin@D365DemoTS909196.OnMicrosoft.com",
+    "Unique user identity id": 3,
+    "User Name": "admin@D365DemoTS909196.onmicrosoft.com",
+    "Created On": "11/5/2022 5:21:02 AM",
+    "Windows Live ID": "admin@D365DemoTS909196.onmicrosoft.com",
+    "Full Name": "System Administrator",
+    "License Type": "Enterprise",
+    "Modified On": "11/10/2022 2:50:51 PM",
+    "Azure State": "Exists",
+    "Default Filters Populated": false,
+    "Outgoing Email Delivery Method": "Server-Side Synchronization or Email Router",
+    "Address": "US",
+    "Primary Email Status": "Approved",
+    "Last Name": "Administrator",
+    "Mobile Phone": "425-555-0101",
+    "User Synced": true,
+    "User License Type": 59,
+    "Deleted State": "Not deleted",
+    "Default OneDrive for Business Folder Name": "CRM",
+    "Email Address O365 Admin Approval Status": false,
+    "Invitation Status": "Invitation Not Sent",
+    "Yomi Full Name": "System Administrator",
+    "Status": false,
+    "User PUID": "100320013C21A393",
+    "Country/Region": "US",
+    "User Licensed": true
+  },
+  "Modified On": "9/16/2023 8:18:46 PM",
+  "Owning User": {
+    "Integration user mode": false,
+    "Main Phone": "425-555-0100",
+    "Access Mode": "Read-Write",
+    "First Name": "System",
+    "Restricted Access Mode": false,
+    "Incoming Email Delivery Method": "Server-Side Synchronization or Email Router",
+    "Primary Email": "admin@D365DemoTS909196.OnMicrosoft.com",
+    "Unique user identity id": 3,
+    "User Name": "admin@D365DemoTS909196.onmicrosoft.com",
+    "Created On": "11/5/2022 5:21:02 AM",
+    "Windows Live ID": "admin@D365DemoTS909196.onmicrosoft.com",
+    "Full Name": "System Administrator",
+    "License Type": "Enterprise",
+    "Modified On": "11/10/2022 2:50:51 PM",
+    "Azure State": "Exists",
+    "Default Filters Populated": false,
+    "Outgoing Email Delivery Method": "Server-Side Synchronization or Email Router",
+    "Address": "US",
+    "Primary Email Status": "Approved",
+    "Last Name": "Administrator",
+    "Mobile Phone": "425-555-0101",
+    "User Synced": true,
+    "User License Type": 59,
+    "Deleted State": "Not deleted",
+    "Default OneDrive for Business Folder Name": "CRM",
+    "Email Address O365 Admin Approval Status": false,
+    "Invitation Status": "Invitation Not Sent",
+    "Yomi Full Name": "System Administrator",
+    "Status": false,
+    "User PUID": "100320013C21A393",
+    "Country/Region": "US",
+    "User Licensed": true
+  },
+  "Modified By": {
+    "Integration user mode": false,
+    "Main Phone": "425-555-0100",
+    "Access Mode": "Read-Write",
+    "First Name": "System",
+    "Restricted Access Mode": false,
+    "Incoming Email Delivery Method": "Server-Side Synchronization or Email Router",
+    "Primary Email": "admin@D365DemoTS909196.OnMicrosoft.com",
+    "Unique user identity id": 3,
+    "User Name": "admin@D365DemoTS909196.onmicrosoft.com",
+    "Created On": "11/5/2022 5:21:02 AM",
+    "Windows Live ID": "admin@D365DemoTS909196.onmicrosoft.com",
+    "Full Name": "System Administrator",
+    "License Type": "Enterprise",
+    "Modified On": "11/10/2022 2:50:51 PM",
+    "Azure State": "Exists",
+    "Default Filters Populated": false,
+    "Outgoing Email Delivery Method": "Server-Side Synchronization or Email Router",
+    "Address": "US",
+    "Primary Email Status": "Approved",
+    "Last Name": "Administrator",
+    "Mobile Phone": "425-555-0101",
+    "User Synced": true,
+    "User License Type": 59,
+    "Deleted State": "Not deleted",
+    "Default OneDrive for Business Folder Name": "CRM",
+    "Email Address O365 Admin Approval Status": false,
+    "Invitation Status": "Invitation Not Sent",
+    "Yomi Full Name": "System Administrator",
+    "Status": false,
+    "User PUID": "100320013C21A393",
+    "Country/Region": "US",
+    "User Licensed": true
+  },
+  "Name": "Phillip Piggy",
+  "Created On": "3/20/2023 3:01:57 PM"
+}
+```
+
+You can see in the code above, the **hummanized** version of several *related records* are also included in their appropriate properties. When extending to a depth of **2**, the related records of the core record's related records will also be included. As such, the `HummanizationAsync` method is **recursive**, using the product of itself to extend to related records.
