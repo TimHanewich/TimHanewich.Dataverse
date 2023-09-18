@@ -1,7 +1,7 @@
 ![logo](https://i.imgur.com/ERemSkU.png)
 **TimHanewich.Dataverse**: A lightweight library for **easily** transacting with Microsoft's Dataverse service (formerly Common Data Service or "XRM"), the native data service of Microsoft's Power Platform and Dynamics 365 platform.  
 --------  
-Microsoft provides [an excellent .NET SDK for interacting with the Dataverse API on NuGet](https://www.nuget.org/packages/Microsoft.PowerPlatform.Dataverse.Client). While this library offers extensive flexibility and well-defined capabilities, it is, at least in my opinion, a bit complex for most simple implementations. This library is designed to make both the authentication with Dataverse and consumption of Dataverse services easy.
+Microsoft provides [an excellent .NET SDK for interacting with the Dataverse API on NuGet](https://www.nuget.org/packages/Microsoft.PowerPlatform.Dataverse.Client). While this library offers extensive flexibility and well-defined capabilities, it can be a bit complex for most simple implementations. This library is designed to make both the authentication with Dataverse and consumption of Dataverse services easy.
 
 This library supports:
 - Easily authenticate into Dataverse **without user interaction**.
