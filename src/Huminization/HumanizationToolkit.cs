@@ -56,84 +56,94 @@ namespace TimHanewich.Dataverse.Humanization
             {
                 if (property.Value.Type != JTokenType.Null) //Only include fields with values
                 {
-                    
-                    //Is it a lookup?
-                    if (property.Name.StartsWith("_") && property.Name.EndsWith("_value")) //it is a lookup
+                    foreach (AttributeMetadata ameta in emeta.Attributes) //Try to find the attribute metadata for this property. If we can't find it, move on (skip)!
                     {
-                        foreach (AttributeMetadata ameta in emeta.Attributes)
+                        if (ameta.DisplayName != null) //It has a display name, so it is meant for public consumption (visible to users)
                         {
-                            if (ameta.LogicalName != null && ameta.LogicalName != "" && property.Name.Contains(ameta.LogicalName))
+                            if (ameta.LogicalName == property.Name || "_" + ameta.LogicalName + "_value" == property.Name) //property name matches attribute metadata "logical name"...
                             {
-                                if (depth > 0)
+                                //Is it not one of the automatically disqualified metadata fields?
+                                List<string> ExcludeFields = new List<string>();
+                                ExcludeFields.Add("statecode");
+                                ExcludeFields.Add("statuscode");
+                                ExcludeFields.Add("timezoneruleversionnumber");
+                                ExcludeFields.Add("versionnumber");
+                                if (ExcludeFields.Contains(ameta.LogicalName) == false)
                                 {
 
-                                    //Do we have it in the dictionary?
-                                    JObject HummanizedRelatedRecord = null;
-                                    foreach (KeyValuePair<Guid, JObject> kvp in HummanizedDict)
+                                    //NAME and VALUE - what we will add to this property
+                                    string NAME = ameta.DisplayName;
+                                    JToken VALUE = null;
+
+                                    //Determine what value to add
+                                    if (ameta.AttributeType == AttributeType.Lookup)
                                     {
-                                        if (kvp.Key == Guid.Parse(property.Value.ToString()))
+                                        if (depth > 0)
                                         {
-                                            HummanizedRelatedRecord = kvp.Value;
+                                            //Do we have it in the dictionary?
+                                            JObject HummanizedRelatedRecord = null;
+                                            foreach (KeyValuePair<Guid, JObject> kvp in HummanizedDict)
+                                            {
+                                                if (kvp.Key == Guid.Parse(property.Value.ToString()))
+                                                {
+                                                    HummanizedRelatedRecord = kvp.Value;
+                                                }
+                                            }
+
+                                            //If we did not retrieve it from the dictionary, retrieve it from Dataverse
+                                            if (HummanizedRelatedRecord == null)
+                                            {
+                                                HummanizedRelatedRecord = await service.HumanizeAsync(ameta.Targets[0], Guid.Parse(property.Value.ToString()), depth - 1);
+                                                HummanizedDict.Add(Guid.Parse(property.Value.ToString()), HummanizedRelatedRecord); //Add it to the dictionary for further use next time, if needed
+                                            }
+
+                                            //Add it
+                                            VALUE = HummanizedRelatedRecord;
                                         }
                                     }
-
-                                    //If we did not retrieve it from the dictionary, retrieve it from Dataverse
-                                    if (HummanizedRelatedRecord == null)
+                                    else if (ameta.AttributeType == AttributeType.Picklist || ameta.AttributeType == AttributeType.Virtual) //option set (choice)
                                     {
-                                        HummanizedRelatedRecord = await service.HumanizeAsync(ameta.Targets[0], Guid.Parse(property.Value.ToString()), depth - 1);
-                                        HummanizedDict.Add(Guid.Parse(property.Value.ToString()), HummanizedRelatedRecord); //Add it to the dictionary for further use next time, if needed
-                                    }
-
-                                    //Add it
-                                    ToReturn.Add(ameta.DisplayName, HummanizedRelatedRecord);
-                                }
-                            }
-                        }
-                    }
-                    else //Everything that is NOT a lookup
-                    {
-                        foreach (AttributeMetadata ameta in emeta.Attributes) //Try to find the attribute metadata for this property. If we can't find it, move on (skip)!
-                        {
-                            if (ameta.DisplayName != null) //It has a display name, so it is meant for public consumption (visible to users)
-                            {
-                                if (ameta.LogicalName == property.Name) //property name matches attribute metadata "logical name"...
-                                {
-                                    //Is it not one of the automatically disqualified metadata fields?
-                                    List<string> ExcludeFields = new List<string>();
-                                    ExcludeFields.Add("statecode");
-                                    ExcludeFields.Add("statuscode");
-                                    ExcludeFields.Add("timezoneruleversionnumber");
-                                    ExcludeFields.Add("versionnumber");
-                                    if (ExcludeFields.Contains(ameta.LogicalName) == false)
-                                    {
-                                        if (ameta.AttributeType != AttributeType.Uniqueidentifier)
+                                        //Find the text property in that payload
+                                        foreach (JProperty prop in RecordWithChoiceText.Properties())
                                         {
-                                            //Get property name
-                                            string NAME = ameta.DisplayName; //use the DISPLAY NAME of the column
-
-                                            //add it, depending on the column type
-                                            if (ameta.AttributeType == AttributeType.Picklist || ameta.AttributeType == AttributeType.Virtual) //option set (choice)
+                                            if (prop.Name.StartsWith(ameta.LogicalName + "@"))
                                             {
-                                                //Find the text property in that payload
-                                                foreach (JProperty prop in RecordWithChoiceText.Properties())
-                                                {
-                                                    if (prop.Name.StartsWith(ameta.LogicalName + "@"))
-                                                    {
-                                                        ToReturn.Add(NAME, prop.Value.ToString());
-                                                    }
-                                                }  
+                                                //ToReturn.Add(NAME, prop.Value.ToString());
+                                                VALUE = prop.Value.ToString();
                                             }
-                                            else if (ameta.AttributeType == AttributeType.DateTime)
-                                            {
-                                                DateTime dt = DateTime.Parse(property.Value.ToString());
-                                                ToReturn.Add(NAME, dt.ToString());
-                                            }
-                                            else
-                                            {
-                                                ToReturn.Add(NAME, property.Value);
-                                            }
-                                        } 
+                                        }  
                                     }
+                                    else if (ameta.AttributeType == AttributeType.DateTime)
+                                    {
+                                        DateTime dt = DateTime.Parse(property.Value.ToString());
+                                        //ToReturn.Add(NAME, dt.ToString());
+                                        VALUE = dt.ToString();
+                                    }
+                                    else if (ameta.AttributeType != AttributeType.Uniqueidentifier) //Everything else besides GUIDs
+                                    {
+                                        //ToReturn.Add(NAME, property.Value);
+                                        VALUE = property.Value;
+                                    }
+
+
+
+                                    //If value is not null, add it
+                                    if (VALUE != null)
+                                    {
+                                        //Check if there are any properties already in the return object that already have this exact name. If there are, modify the name
+                                        foreach (JProperty prop in ToReturn.Properties())
+                                        {
+                                            if (prop.Name == NAME)
+                                            {
+                                                NAME = NAME + " (" + ameta.LogicalName + ")";
+                                            }
+                                        }
+                                        
+                                        //Add it
+                                        ToReturn.Add(NAME, VALUE);
+                                    }
+
+
                                 }
                             }
                         }
