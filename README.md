@@ -226,6 +226,8 @@ Into *this*, a much more human-readable form that can easily be understood and l
   "Created On": "3/20/2023 3:01:57 PM"
 }
 ```
+
+### Hummanize with Relational Depth
 The `HummanizeAsync` method also has a third (optional) parameter: `depth` (integer). This defines at what relational "depth" the hummanization should occur. For example, if one of the fields of the table you're hummanizing is a **lookup** field, specifing a depth > 0 will also hummanize the record that is being pointed to and **append this related record** to the returned payload. For example, at a depth of **1**, this would be the response instead:
 ```
 {
@@ -394,3 +396,15 @@ The `HummanizeAsync` method also has a third (optional) parameter: `depth` (inte
 ```
 
 You can see in the code above, the **hummanized** version of several *related records* are also included in their appropriate properties. When extending to a depth of **2**, the related records of the core record's related records will also be included. As such, the `HummanizationAsync` method is **recursive**, using the product of itself to extend to related records.
+
+### How does Hummanization Work?
+Using metadata from Dataverse for your record of interest and related tables, the `HummanizeAsync` method makes several modifications to the standard (raw) Dataverse record payload:
+
+1. Removes properties with null values.
+2. Remove unneeded fields (fields that are primary internal to Dataverse): OData-specific fields, state code, status code, time zone rule conversation, version number, unique identifier, etc.
+3. Convert property **logical names** to their **display name** alternatives.
+4. Translate any choice fields from their integer-value representation to their label (text) equivalent.
+5. Format dates (i.e. `2023-03-20T15:01:57Z` to `3/20/2023 3:01:57 PM`).
+6. Apply same procedure as above to related records and append to core record (if `depth` > 0).
+
+You can review the code of the `HummanizeAsync` method [here](./src/Huminization/HumanizationToolkit.cs).
