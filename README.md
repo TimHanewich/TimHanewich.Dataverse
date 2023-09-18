@@ -1,10 +1,16 @@
 ![logo](https://i.imgur.com/ERemSkU.png)
-==============
-**TimHanewich.Dataverse**: A lightweight library for interacting with Microsoft's Dataverse service (formerly Common Data Service or "XRM"), the native data service of Microsoft's Power Platform and Dynamics 365 platform.  
+**TimHanewich.Dataverse**: A lightweight library for **easily** transacting with Microsoft's Dataverse service (formerly Common Data Service or "XRM"), the native data service of Microsoft's Power Platform and Dynamics 365 platform.  
 --------  
-This library alleviates the need to create custom HTTP requests to interact with Dataverse. After providing the service with a few parameters, you can easily interact with Dataverse through the traditional CRUD operators.
+Microsoft provides [an excellent .NET SDK for interacting with the Dataverse API on NuGet](https://www.nuget.org/packages/Microsoft.PowerPlatform.Dataverse.Client). While this library offers extensive flexibility and well-defined capabilities, it is, at least in my opinion, a bit complex for most simple implementations. This library is designed to make both the authentication with Dataverse and consumption of Dataverse services easy.
 
-## Install the package
+This library supports:
+- Easily authenticate into Dataverse **without user interaction**.
+- Perform CRUD operations (**Create**, **Read**, **Update**, **Delete**) for any record.
+- Perform *advanced reads* that include **filtering**, **sorting**, **selection of specific fields**, etc.
+- **Access rich metadata** of any table or inter-table relationship.
+- *Humanize* any record of any table for use within a large language model ("GPT")
+
+### Install the package
 To install the package in your .NET (C# or VB.NET) project, add the following package from NuGet:
 [TimHanewich.Dataverse](https://www.nuget.org/packages/TimHanewich.Dataverse/)
 Run this command in the .NET CLI:
