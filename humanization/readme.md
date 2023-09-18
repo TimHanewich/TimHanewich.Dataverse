@@ -4,6 +4,8 @@
     - OData fields
     - state code
     - status code
+    - time zone rule conversion
+    - versionnumber
     - Primary key (GUID)
 - Property names to display names
 - Choices to names
