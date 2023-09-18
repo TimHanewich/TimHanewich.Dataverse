@@ -89,30 +89,33 @@ namespace TimHanewich.Dataverse.Humanization
                                     ExcludeFields.Add("versionnumber");
                                     if (ExcludeFields.Contains(ameta.LogicalName) == false)
                                     {
-                                        //Get property name
-                                        string NAME = ameta.DisplayName; //use the DISPLAY NAME of the column
+                                        if (ameta.AttributeType != AttributeType.Uniqueidentifier)
+                                        {
+                                            //Get property name
+                                            string NAME = ameta.DisplayName; //use the DISPLAY NAME of the column
 
-                                        //add it, depending on the column type
-                                        if (ameta.AttributeType == AttributeType.Picklist || ameta.AttributeType == AttributeType.Virtual) //option set (choice)
-                                        {
-                                            //Find the text property in that payload
-                                            foreach (JProperty prop in RecordWithChoiceText.Properties())
+                                            //add it, depending on the column type
+                                            if (ameta.AttributeType == AttributeType.Picklist || ameta.AttributeType == AttributeType.Virtual) //option set (choice)
                                             {
-                                                if (prop.Name.StartsWith(ameta.LogicalName + "@"))
+                                                //Find the text property in that payload
+                                                foreach (JProperty prop in RecordWithChoiceText.Properties())
                                                 {
-                                                    ToReturn.Add(NAME, prop.Value.ToString());
-                                                }
-                                            }  
-                                        }
-                                        else if (ameta.AttributeType == AttributeType.DateTime)
-                                        {
-                                            DateTime dt = DateTime.Parse(property.Value.ToString());
-                                            ToReturn.Add(NAME, dt.ToString());
-                                        }
-                                        else if (ameta.AttributeType != AttributeType.Uniqueidentifier) //Everything else BESIDES the unique id
-                                        {
-                                            ToReturn.Add(NAME, property.Value);
-                                        }
+                                                    if (prop.Name.StartsWith(ameta.LogicalName + "@"))
+                                                    {
+                                                        ToReturn.Add(NAME, prop.Value.ToString());
+                                                    }
+                                                }  
+                                            }
+                                            else if (ameta.AttributeType == AttributeType.DateTime)
+                                            {
+                                                DateTime dt = DateTime.Parse(property.Value.ToString());
+                                                ToReturn.Add(NAME, dt.ToString());
+                                            }
+                                            else
+                                            {
+                                                ToReturn.Add(NAME, property.Value);
+                                            }
+                                        } 
                                     }
                                 }
                             }
